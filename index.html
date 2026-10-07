@@ -99,6 +99,49 @@ input::-webkit-date-and-time-value{text-align:left}
 .impcard{display:flex;gap:10px;align-items:center;margin-bottom:12px}
 .impcard .btn{flex:1;min-height:54px;font-size:17px}
 .hdrbtns{display:flex;gap:8px}
+body.tab-check header .seg5,body.tab-check header .frow{display:none!important}
+.ck-head{position:sticky;top:calc(env(safe-area-inset-top) + 6px);z-index:3;box-shadow:0 8px 18px rgba(0,0,0,.4);transition:border-color .4s,box-shadow .4s}
+.ck-count{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.15;margin-top:2px;transition:color .3s}
+.ck-pct{font-size:16px;font-weight:700;color:var(--mut);margin-left:4px}
+.ck-bar{height:14px;background:var(--card2);border-radius:7px;overflow:hidden;margin-top:12px}
+.ck-bar i{display:block;position:relative;overflow:hidden;height:100%;border-radius:7px;background:linear-gradient(90deg,#2f7de0,var(--b));transition:width .55s cubic-bezier(.22,1,.36,1)}
+.ck-head.full{border-color:var(--g);box-shadow:0 0 0 1px var(--g),0 8px 26px rgba(46,204,113,.28)}
+.ck-head.full .ck-bar i{background:linear-gradient(90deg,#21b35f,var(--g))}
+.ck-head.full .ck-bar i::after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%);transform:translateX(-100%);animation:ckshine 1.4s ease-out .3s 2}
+.ck-head.full .ck-count{color:var(--g)}
+.ck-ready{flex:none;opacity:0;transform:scale(.6);font-weight:800;font-size:14px;color:#06210f;background:var(--g);border-radius:20px;padding:8px 12px;white-space:nowrap;pointer-events:none;transition:opacity .3s,transform .45s cubic-bezier(.34,1.56,.64,1)}
+.ck-head.full .ck-ready{opacity:1;transform:scale(1)}
+.ck-head.celebrate{animation:ckcel .6s cubic-bezier(.34,1.56,.64,1)}
+.ck-conf{position:absolute;left:50%;top:40%;width:8px;height:8px;border-radius:2px;pointer-events:none;animation:ckconf 1s cubic-bezier(.2,.8,.3,1) forwards}
+.ck-row{display:flex;align-items:center;gap:12px;width:100%;min-height:62px;padding:12px 14px;margin:0 0 8px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;color:var(--text);font-size:16px;line-height:1.3;font-weight:500;transition:background .25s,border-color .25s,transform .12s}
+.ck-row:active{transform:scale(.985)}
+.ck-row.on{background:rgba(46,204,113,.08);border-color:rgba(46,204,113,.45)}
+.ck-num{flex:none;width:18px;text-align:center;color:var(--mut);font-size:13px;font-weight:700}
+.ck-text{flex:1;min-width:0;transition:color .25s}
+.ck-row.on .ck-text{color:#aeb9c4}
+.ck-box{flex:none;position:relative;width:30px;height:30px;border-radius:9px;border:2px solid #4b5563;display:grid;place-items:center;transition:background .25s,border-color .25s}
+.ck-box svg{display:block}
+.ck-box path{fill:none;stroke:#06210f;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:22;stroke-dashoffset:22;transition:stroke-dashoffset .3s cubic-bezier(.65,0,.45,1)}
+.ck-row.on .ck-box{background:var(--g);border-color:var(--g)}
+.ck-row.on .ck-box path{stroke-dashoffset:0;transition-delay:.08s}
+.ck-box::after{content:'';position:absolute;inset:-2px;border-radius:10px;border:2px solid var(--g);opacity:0;pointer-events:none}
+.ck-row.pop .ck-box{animation:ckpop .42s cubic-bezier(.34,1.56,.64,1)}
+.ck-row.pop .ck-box::after{animation:ckring .5s ease-out}
+.ck-row.unpop .ck-box{animation:ckunpop .28s ease}
+@keyframes ckpop{0%{transform:scale(1)}35%{transform:scale(1.28)}65%{transform:scale(.93)}100%{transform:scale(1)}}
+@keyframes ckunpop{0%{transform:scale(1)}50%{transform:scale(.84)}100%{transform:scale(1)}}
+@keyframes ckring{0%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes ckshine{to{transform:translateX(100%)}}
+@keyframes ckcel{0%{transform:scale(1)}40%{transform:scale(1.025)}100%{transform:scale(1)}}
+@keyframes ckconf{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(var(--rot))}}
+.ck-edit{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.ck-edit input{flex:1;min-width:0}
+.ck-edit button{flex:none;width:44px;min-height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:17px}
+.ck-edit button:disabled{opacity:.35}
+.ck-edit button.del{color:var(--r)}
+.ck-edit button.add{background:var(--b);border-color:var(--b);color:#fff}
+.ckdash{display:flex;align-items:center;gap:12px;width:100%;text-align:left;color:var(--text)}
+@media (prefers-reduced-motion: reduce){.ck-row,.ck-box,.ck-box path,.ck-bar i,.ck-ready,.ck-head,.ck-count{transition:none!important;animation:none!important}.ck-box::after,.ck-bar i::after,.ck-conf{display:none!important}}
 @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
@@ -121,16 +164,16 @@ input::-webkit-date-and-time-value{text-align:left}
 <main>
   <section id="tab-dash"></section>
   <section id="tab-trades" class="hide"></section>
-  <section id="tab-obs" class="hide"></section>
+  <section id="tab-check" class="hide"></section>
   <section id="tab-more" class="hide"></section>
 </main>
 
 <button class="fab" id="fab" aria-label="Add">+</button>
 <nav>
-  <button data-tab="dash" class="on"><b>📊</b>Dashboard</button>
-  <button data-tab="trades"><b>📒</b>Trades</button>
-  <button data-tab="obs"><b>👁</b>Notes</button>
-  <button data-tab="more"><b>⚙️</b>Backup</button>
+  <button type="button" data-tab="dash" class="on"><b>📊</b>Dashboard</button>
+  <button type="button" data-tab="trades"><b>📒</b>Trades</button>
+  <button type="button" data-tab="check"><b>✅</b>Checklist</button>
+  <button type="button" data-tab="more"><b>⚙️</b>Backup</button>
 </nav>
 
 <!-- Trade form -->
@@ -173,6 +216,7 @@ input::-webkit-date-and-time-value{text-align:left}
   <label>Followed my rules?</label>
   <div class="seg" data-seg="followed"><button type="button" class="yes on" data-v="yes">YES</button><button type="button" class="no" data-v="no">NO</button></div>
   <input type="hidden" name="followed" value="yes">
+  <div class="hint" id="ckHint"></div>
   <label>Emotions / mistakes / notes</label>
   <textarea name="notes" placeholder="How did I feel? Did I chase, move my stop, revenge trade?"></textarea>
   <label>Screenshot (optional)</label>
@@ -184,35 +228,7 @@ input::-webkit-date-and-time-value{text-align:left}
 </form>
 </div>
 
-<!-- Observation form -->
-<div class="sheet" id="obsSheet">
-<form id="obsForm" autocomplete="off">
-  <div class="top"><button type="button" class="btn" data-close>Cancel</button><h3 id="obsTitle">New note</h3><button type="submit" class="btn pri">Save</button></div>
-  <input type="hidden" name="eid">
-  <label>Type</label>
-  <div class="seg" data-seg="kind"><button type="button" class="on" data-v="observation">Observation</button><button type="button" data-v="skip">No-trade day</button></div>
-  <input type="hidden" name="kind" value="observation">
-  <div class="f2">
-    <div><label>Date</label><input type="date" name="date" required></div>
-    <div><label>Time (PT, optional)</label><input type="time" name="time"></div>
-  </div>
-  <div data-only="skip" class="hide">
-    <label>Setup</label><input name="setup" list="setupList" value="Midpoint rule">
-    <label>Followed my rules by skipping?</label>
-    <div class="seg" data-seg="followed"><button type="button" class="yes on" data-v="yes">YES</button><button type="button" class="no" data-v="no">NO</button></div>
-    <input type="hidden" name="followed" value="yes">
-  </div>
-  <label id="obsTextLabel">What did you see? (market notes, setup ideas)</label>
-  <textarea name="text" style="min-height:160px"></textarea>
-  <div data-only="observation"><label>Tags (comma separated)</label><input name="tags" placeholder="liquidity sweep, first candle"></div>
-  <label>Screenshot (optional)</label>
-  <input type="file" accept="image/*" data-shot>
-  <img class="shot hide" data-preview alt="">
-  <button type="button" class="btn full hide" data-rmshot style="margin-top:8px">Remove screenshot</button>
-  <div style="height:16px"></div>
-  <button type="button" class="btn dan full hide" data-delete>Delete</button>
-</form>
-</div>
+
 
 <div class="sheet" id="impSheet"><div id="impBody" style="max-width:760px;margin:0 auto"></div></div>
 <input type="file" id="brokerFile" accept=".csv,text/csv,text/comma-separated-values,application/vnd.ms-excel,text/plain" class="hide">
@@ -240,6 +256,7 @@ function load(){
 }
 function normalize(d){
   d=d||{};d.trades=d.trades||[];d.observations=d.observations||[];
+  if(!d.checklist||!Array.isArray(d.checklist.items))d.checklist={items:defaultCheckItems(),days:(d.checklist&&d.checklist.days)||{}};d.checklist.days=d.checklist.days||{};
   var s=d.settings||{};var out={};for(var k in DEFAULT_SETTINGS)out[k]=(s[k]!==undefined?s[k]:JSON.parse(JSON.stringify(DEFAULT_SETTINGS[k])));
   for(var ik in DEFAULT_SETTINGS.instruments)if(!out.instruments[ik])out.instruments[ik]=JSON.parse(JSON.stringify(DEFAULT_SETTINGS.instruments[ik]));
   d.settings=out;d.version=1;return d;
@@ -318,7 +335,7 @@ function render(){
   cb.textContent=filt.preset==='custom'&&(filt.from||filt.to)?'📅 '+(filt.from?filt.from.slice(5).replace('-','/'):'…')+'–'+(filt.to?filt.to.slice(5).replace('-','/'):'…'):'📅 Custom';
   $('#customRow').classList.toggle('hide',!(customOpen||filt.preset==='custom'));
   $('#acctLabel').textContent=db.settings.account;
-  renderDash();renderTrades();renderObs();renderMore();
+  renderDash();renderTrades();renderCheck();renderMore();
 }
 
 function statBox(l,v,c){return '<div class="stat"><div class="l">'+l+'</div><div class="v '+(c||'')+'">'+v+'</div></div>';}
@@ -359,8 +376,9 @@ function renderDash(){
    statBox('Streak',s.streak?s.streak+(s.streakType==='W'?' win':' loss')+(s.streak>1?(s.streakType==='W'?'s':'es'):''):'–',s.streakType==='W'?'pos':s.streakType==='L'?'neg':'')+
    '</div></div>';
   h+='<div class="card"><h2>Equity curve</h2>'+equitySVG(ts)+'</div>';
-  var skips=db.observations.filter(function(o){return o.kind==='skip'&&inRange(o.date);}).length;
-  h+='<div class="small mut" style="text-align:center;margin:4px 0 20px">'+skips+' no-trade day'+(skips===1?'':'s')+' logged in this range · times are Pacific</div>';
+  var C=ckNow();
+  h+='<button type="button" class="card ckdash" data-go="check" id="dashCheck"><span style="font-size:26px">'+(C.pct===100?'🎯':'✅')+'</span><span style="flex:1"><span class="small mut" style="display:block">Today\'s checklist</span><b class="'+(C.pct===100?'pos':'')+'">'+C.done+' / '+C.total+' · '+C.pct+'%'+(C.pct===100?' — ready to trade':'')+'</b><span class="bar" style="display:block"><i style="width:'+C.pct+'%;background:'+(C.pct===100?'var(--g)':'var(--b)')+'"></i></span></span><span class="mut">›</span></button>';
+  h+='<div class="small mut" style="text-align:center;margin:4px 0 20px">Times are Pacific</div>';
   $('#tab-dash').innerHTML=h;
 }
 function equitySVG(ts){
@@ -391,7 +409,7 @@ function renderTrades(){
       '<div class="row"><span><span class="badge '+t.direction+'">'+(t.direction==='short'?'SHORT':'LONG')+'</span> <b>'+esc(t.contracts)+' '+esc(t.instrument)+'</b></span><b class="'+cls(p)+'">'+money(p,1)+'</b></div>'+
       '<div class="small mut">'+fmtDate(t.date)+(t.time?' · '+fmtTime(t.time):'')+(t.exitTime?' → '+fmtTime(t.exitTime):'')+'</div>'+
       '<div class="small">'+fmtPx(t.entry)+' → '+fmtPx(t.exit)+' · stop '+fmtPx(t.stop)+(isFinite(r)?' · <b class="'+cls(r)+'">'+(r>0?'+':'')+r.toFixed(2)+'R</b>':'')+'</div>'+
-      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':t.followed==='yes'?'var(--g)':'var(--y)')+'">'+(t.followed==='no'?'✗ broke rules':t.followed==='yes'?'✓ followed rules':'? rules not set')+'</span>'+(t.broker?'<span class="tag">📥 '+esc(t.broker)+(t.parts>1?' · '+t.parts+' fills':'')+'</span>':'')+'</div>'+
+      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':t.followed==='yes'?'var(--g)':'var(--y)')+'">'+(t.followed==='no'?'✗ broke rules':t.followed==='yes'?'✓ followed rules':'? rules not set')+'</span>'+(t.broker?'<span class="tag">📥 '+esc(t.broker)+(t.parts>1?' · '+t.parts+' fills':'')+'</span>':'')+(function(){var cs=ckStats(t.date);return cs?'<span class="tag ck-tag" style="color:'+(cs.pct===100?'var(--g)':'var(--y)')+'">☑ checklist '+cs.pct+'%</span>':'';})()+'</div>'+
       (t.notes?'<div class="small mut" style="margin-top:4px;white-space:pre-wrap">'+esc(t.notes.length>140?t.notes.slice(0,140)+'…':t.notes)+'</div>':'')+
       '</div>'+(t.screenshot?'<img src="'+t.screenshot+'" alt="">':'')+'</div>';});
   $('#tab-trades').innerHTML=h;
@@ -414,7 +432,7 @@ function renderMore(){
    '<div class="btns"><button class="btn pri" id="expJson">Export JSON (full)</button><button class="btn" id="expCsv">Export CSV</button></div>'+
    '<div style="height:10px"></div><button class="btn full" id="impBtn">Import backup (JSON/CSV) or broker CSV…</button>'+
    '<div class="hint">JSON keeps screenshots; CSV doesn\'t (opens in Excel/Sheets). Import merges by ID — existing entries with the same ID are updated, nothing else is removed.</div>'+
-   '<div class="hint">Storage used: ~'+(used/1024).toFixed(0)+' KB of roughly 5,000 KB available.</div></div>';
+   (db.observations.length?'<div class="hint">'+db.observations.length+' older note'+(db.observations.length===1?' is':'s are')+' kept in your JSON backup (the Notes tab was replaced by Checklist).</div>':'')+'<div class="hint">Storage used: ~'+(used/1024).toFixed(0)+' KB of roughly 5,000 KB available.</div></div>';
   h+='<div class="card"><h2>Account settings</h2><form id="setForm">'+
    '<label>Account label</label><input name="account" value="'+esc(S.account)+'">'+
    '<div class="f2"><div><label>Starting balance</label><input name="startBalance" inputmode="decimal" value="'+S.startBalance+'"></div><div><label>Profit target</label><input name="profitTarget" inputmode="decimal" value="'+S.profitTarget+'"></div></div>'+
@@ -438,7 +456,7 @@ function openTrade(t){
   var f=$('#tradeForm'),n=nowPT();f.reset();
   t=t||{id:'',date:n.date,time:n.time,instrument:'MNQ',direction:'long',contracts:2,setup:'Midpoint rule',followed:'yes'};
   f.elements.eid.value=t.id||'';['date','time','instrument','contracts','entry','stop','target','exit','exitTime','setup','notes'].forEach(function(k){f.elements[k].value=t[k]==null?'':t[k];});
-  setSeg(f,'direction',t.direction||'long');setSeg(f,'followed',t.id?(t.followed||''):'yes');
+  var cs0=ckStats(t.date);setSeg(f,'direction',t.direction||'long');setSeg(f,'followed',t.id?(t.followed||(cs0&&cs0.pct===100?'yes':'')):'yes');
   f.dataset.pnlManual=t.pnlManual?'1':'';f.dataset.rManual=t.rManual?'1':'';f.dataset.pnlSource=t.pnlManual&&t.pnlSource?t.pnlSource:'';
   f.elements.pnl.value=t.pnlManual&&has(t.pnl)?t.pnl:'';f.elements.r.value=t.rManual&&has(t.r)?t.r:'';
   editingShot.trade=t.screenshot||'';showShot(f,editingShot.trade);
@@ -455,6 +473,7 @@ function recalc(){
     if(!isNaN(tg))ph+=' · target = '+(Math.abs(tg-e)/risk).toFixed(2)+'R';
     if((t.direction==='long'&&s>e)||(t.direction==='short'&&s<e))ph+=' · ⚠ stop is on the wrong side for a '+t.direction;}
   $('#planHint').textContent=ph;
+  var cs=ckStats(f.elements.date.value);$('#ckHint').textContent=cs?'Checklist that day: '+cs.done+'/'+cs.total+' ('+cs.pct+'%)'+(cs.pct===100?' ✅':''):'No checklist saved for that day.';
   $('#pnlHint').textContent=i?'Auto P&L = points × $'+i.pv+' × contracts − $'+i.fee+' × contracts.':'No point value for '+t.instrument+' — enter P&L manually (or add it in Backup › settings for MNQ).';
 }
 function saveTrade(ev){
@@ -522,9 +541,10 @@ function importCSV(text){
       if(ob.kind==='skip'){ob.setup=o.setup||'';ob.followed=(o.followed_rules||'yes').toLowerCase()==='no'?'no':'yes';}
       if(ob.date){upsert(db.observations,ob);n++;}}});
   return n;}
-function importJSON(text){var d=JSON.parse(text),n=0;if(!d||(!d.trades&&!d.observations))throw new Error('Not a journal backup');
+function importJSON(text){var d=JSON.parse(text),n=0;if(!d||(!d.trades&&!d.observations&&!d.checklist))throw new Error('Not a journal backup');
   (d.trades||[]).forEach(function(t){if(t&&t.date){t.id=t.id||uid();upsert(db.trades,t);n++;}});
   (d.observations||[]).forEach(function(o){if(o&&o.date){o.id=o.id||uid();upsert(db.observations,o);n++;}});
+  if(d.checklist&&Array.isArray(d.checklist.items)){if(d.checklist.items.length)db.checklist.items=d.checklist.items;Object.keys(d.checklist.days||{}).forEach(function(k){if(!db.checklist.days[k])db.checklist.days[k]=d.checklist.days[k];});}
   if(d.settings&&confirm('Also restore account settings from this backup?'))db.settings=normalize({settings:d.settings}).settings;return n;}
 function exportFile(name,text,mime){
   var blob=new Blob([text],{type:mime});
@@ -532,6 +552,59 @@ function exportFile(name,text,mime){
   if(isIOS&&navigator.canShare&&typeof File!=='undefined'){try{var file=new File([blob],name,{type:mime});if(navigator.canShare({files:[file]})){navigator.share({files:[file],title:name}).catch(function(){});return;}}catch(e){}}
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);toast('Exported '+name);}
 function stamp(){return nowPT().date;}
+
+/* ---------- pre-trade checklist ---------- */
+
+function defaultCheckItems(){return ['6:30–6:45 PT 15m candle has closed','Candle range is at least ~89 points',"Price is on the candle's side of the midpoint (long: green & above; short: red & below)",'Entry at 6:45 AM PT, market order','Stop at the midpoint','Target set at 5R','Size is 2 MNQ',"Today's loss stays within the $1,000 daily limit",'Plan to be flat by 12:55 PM PT','One trade only — no revenge trades'].map(function(t,i){return {id:'ck'+(i+1),text:t};});}
+var ckEdit=false,ckRendered='';
+var reduceMotion=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function ckToday(){return nowPT().date;}
+function ckDay(date,create){var D=db.checklist.days;if(!D[date]&&create)D[date]={checked:[],total:db.checklist.items.length,done:0};return D[date]||null;}
+function ckSync(day){var ids=db.checklist.items.map(function(i){return i.id;});day.checked=day.checked.filter(function(id){return ids.indexOf(id)>=0;});day.total=ids.length;day.done=day.checked.length;day.updatedAt=Date.now();}
+function ckStats(date){var d=date&&ckDay(date);if(!d||!d.total)return null;return {done:d.done,total:d.total,pct:Math.round(d.done/d.total*100)};}
+function ckNow(){var date=ckToday(),day=ckDay(date)||{checked:[]},items=db.checklist.items,done=items.filter(function(i){return day.checked.indexOf(i.id)>=0;}).length,total=items.length;return {date:date,day:day,done:done,total:total,pct:total?Math.round(done/total*100):0};}
+function renderCheck(){
+  var C=ckNow(),items=db.checklist.items,h='';ckRendered=C.date;
+  h+='<div class="card ck-head'+(C.pct===100&&C.total?' full':'')+'" id="ckHead">'+
+    '<div class="row"><div><div class="small mut">Pre-trade checklist · '+fmtDate(C.date).replace(/, \d{4}$/,'')+'</div>'+
+    '<div class="ck-count"><span id="ckDone">'+C.done+'</span> / <span id="ckTotal">'+C.total+'</span> <span class="ck-pct" id="ckPct">'+C.pct+'%</span></div></div>'+
+    '<div class="ck-ready" id="ckReady" aria-live="polite">🎯 Ready to trade</div></div>'+
+    '<div class="ck-bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+C.total+'" aria-valuenow="'+C.done+'" id="ckBar"><i id="ckFill" style="width:'+C.pct+'%"></i></div></div>';
+  if(!ckEdit){
+    h+='<div id="ckList">'+items.map(function(it,i){var on=C.day.checked.indexOf(it.id)>=0;
+      return '<button type="button" class="ck-row'+(on?' on':'')+'" data-ck="'+esc(it.id)+'" role="checkbox" aria-checked="'+on+'"><span class="ck-box"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="ck-num">'+(i+1)+'</span><span class="ck-text">'+esc(it.text)+'</span></button>';}).join('')+
+      (items.length?'':'<div class="empty">No items. Tap Edit to add some.</div>')+'</div>'+
+      '<div class="btns" style="margin-top:6px"><button type="button" class="btn" id="ckReset">↺ Reset today</button><button type="button" class="btn" id="ckEditBtn">✏️ Edit items</button></div>'+
+      '<div class="hint" style="text-align:center;margin-top:8px">Resets automatically each day (PT). Trades logged on a 100% day default to “Followed rules: yes”.</div>';
+  }else{
+    h+='<div class="card"><h2>Edit checklist</h2>'+items.map(function(it,i){
+      return '<div class="ck-edit"><input data-ckedit="'+esc(it.id)+'" value="'+esc(it.text)+'" aria-label="Item '+(i+1)+'">'+
+        '<button type="button" data-ckmove="up" data-id="'+esc(it.id)+'" aria-label="Move up"'+(i===0?' disabled':'')+'>↑</button>'+
+        '<button type="button" data-ckmove="down" data-id="'+esc(it.id)+'" aria-label="Move down"'+(i===items.length-1?' disabled':'')+'>↓</button>'+
+        '<button type="button" class="del" data-ckdel="'+esc(it.id)+'" aria-label="Remove">✕</button></div>';}).join('')+
+      '<div class="ck-edit"><input id="ckNew" placeholder="New item…" enterkeyhint="done"><button type="button" class="add" id="ckAdd" aria-label="Add item">＋</button></div>'+
+      '<div class="btns" style="margin-top:8px"><button type="button" class="btn" id="ckDefaults">Restore defaults</button><button type="button" class="btn pri" id="ckEditDone">Done</button></div></div>';
+  }
+  var hist=Object.keys(db.checklist.days).filter(function(d){return d!==C.date&&db.checklist.days[d].total;}).sort().reverse().slice(0,7);
+  if(hist.length&&!ckEdit){h+='<div class="card" style="margin-top:12px"><h2>Recent days</h2>'+hist.map(function(d){var s=ckStats(d);
+    return '<div class="row small" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>'+fmtDate(d)+'</span><span class="'+(s.pct===100?'pos':'mut')+'">'+s.done+'/'+s.total+' · '+s.pct+'%'+(s.pct===100?' ✅':'')+'</span></div>';}).join('')+'</div>';}
+  $('#tab-check').innerHTML=h;}
+function ckProgress(celebrate){var C=ckNow(),head=$('#ckHead');if(!head)return;var full=C.pct===100&&C.total>0,was=head.classList.contains('full');
+  $('#ckDone').textContent=C.done;$('#ckTotal').textContent=C.total;$('#ckPct').textContent=C.pct+'%';$('#ckFill').style.width=C.pct+'%';$('#ckBar').setAttribute('aria-valuenow',C.done);
+  head.classList.toggle('full',full);
+  if(full&&!was&&celebrate){head.classList.remove('celebrate');void head.offsetWidth;head.classList.add('celebrate');
+    if(navigator.vibrate)try{navigator.vibrate([15,40,25]);}catch(e){}
+    if(!reduceMotion)confetti(head);}}
+function confetti(host){var cols=['#2ecc71','#4da3ff','#f5c542','#ff7ab6','#ffffff'];
+  for(var i=0;i<18;i++){var s=document.createElement('i');s.className='ck-conf';var a=Math.random()*Math.PI*2,d=50+Math.random()*70;
+    s.style.background=cols[i%cols.length];s.style.setProperty('--dx',Math.round(Math.cos(a)*d)+'px');s.style.setProperty('--dy',Math.round(Math.sin(a)*d-30)+'px');s.style.setProperty('--rot',Math.round(Math.random()*540)+'deg');
+    host.appendChild(s);setTimeout(function(n){return function(){n.remove();};}(s),1100);}}
+function ckToggle(row){var id=row.dataset.ck,day=ckDay(ckToday(),true),i=day.checked.indexOf(id),on=i<0;
+  if(on)day.checked.push(id);else day.checked.splice(i,1);ckSync(day);persist();
+  row.classList.toggle('on',on);row.setAttribute('aria-checked',String(on));row.classList.remove('pop','unpop');void row.offsetWidth;row.classList.add(on?'pop':'unpop');
+  if(on&&navigator.vibrate)try{navigator.vibrate(10);}catch(e){}
+  ckProgress(true);renderDash();renderTrades();}
+function ckItemsChanged(){var day=ckDay(ckToday());if(day)ckSync(day);persist();renderCheck();renderDash();}
 
 /* ---------- broker CSV import (TopstepX, Tradovate, NinjaTrader, TradingView, custom) ---------- */
 var ZONES={PT:'America/Los_Angeles',ET:'America/New_York',CT:'America/Chicago',UTC:'UTC'};
@@ -694,7 +767,7 @@ function runImport(fmt,table,zone,fileName){
     if(man){['time','contracts','entry','exit','exitTime','pnl','pnlManual','pnlSource','fees','feesEstimated','importKeys','importBatch','broker','contract','entryTs','exitTs','parts'].forEach(function(k){man[k]=obj[k];});
       if(!man.rManual){var rr=autoR(man);man.r=isFinite(rr)?rr:'';}
       t.keys.forEach(function(k){ix[k]=man.id;});merged.push(man);return;}
-    obj.id=uid();obj.setup='Midpoint rule';obj.followed='';obj.notes='';obj.screenshot='';
+    var csI=ckStats(obj.date);obj.id=uid();obj.setup='Midpoint rule';obj.followed=csI&&csI.pct===100?'yes':'';obj.notes='';obj.screenshot='';
     db.trades.push(obj);t.keys.forEach(function(k){ix[k]=obj.id;});added.push(obj);});
   var ok=persist();render();
   lastImport={snap:snap,fmt:fmt,table:table,zone:zone,fileName:fileName,added:added,merged:merged,dups:dups,ctx:res.ctx,saved:ok};
@@ -758,7 +831,15 @@ function readFileInput(inp){var file=inp.files&&inp.files[0];if(!file)return;var
 document.addEventListener('click',function(e){
   var el=e.target.closest('button,[data-edit-trade],[data-edit-obs],.item img');if(!el)return;
   if(el.matches('.item img')){e.stopPropagation();$('#viewer img').src=el.src;$('#viewer').classList.add('open');return;}
-  if(el.dataset.tab){tab=el.dataset.tab;$$('nav button').forEach(function(b){b.classList.toggle('on',b===el);});['dash','trades','obs','more'].forEach(function(t){$('#tab-'+t).classList.toggle('hide',t!==tab);});$('#fab').classList.toggle('hide',tab==='more');window.scrollTo(0,0);return;}
+  if(el.dataset.tab||el.dataset.go){showTab(el.dataset.tab||el.dataset.go);return;}
+  if(el.dataset.ck){ckToggle(el);return;}
+  if(el.id==='ckReset'){var dd=ckDay(ckToday());if(dd){dd.checked=[];ckSync(dd);persist();}renderCheck();renderDash();renderTrades();toast('Checklist reset for today');return;}
+  if(el.id==='ckEditBtn'){ckEdit=true;renderCheck();return;}
+  if(el.id==='ckEditDone'){ckEdit=false;ckItemsChanged();return;}
+  if(el.id==='ckAdd'){var v=$('#ckNew').value.trim();if(!v){$('#ckNew').focus();return;}db.checklist.items.push({id:'ck'+uid(),text:v});ckItemsChanged();var ni=$('#ckNew');if(ni)ni.focus();return;}
+  if(el.dataset.ckdel){if(!confirm('Remove this item?'))return;db.checklist.items=db.checklist.items.filter(function(i){return i.id!==el.dataset.ckdel;});ckItemsChanged();return;}
+  if(el.dataset.ckmove){var L=db.checklist.items,ix=L.findIndex(function(i){return i.id===el.dataset.id;}),to=ix+(el.dataset.ckmove==='up'?-1:1);if(ix>=0&&to>=0&&to<L.length){var tmp=L[ix];L[ix]=L[to];L[to]=tmp;ckItemsChanged();}return;}
+  if(el.id==='ckDefaults'){if(!confirm('Replace your checklist items with the default midpoint-rule list?'))return;db.checklist.items=defaultCheckItems();ckItemsChanged();return;}
   if(el.dataset.p){setPreset(el.dataset.p);return;}
   if(el.id==='customBtn'){var isOpen=!$('#customRow').classList.contains('hide');if(isOpen&&filt.preset==='custom'){setPreset('all');return;}customOpen=!isOpen;render();return;}
   if(el.hasAttribute('data-import')){$('#brokerFile').click();return;}
@@ -774,7 +855,7 @@ document.addEventListener('click',function(e){
   if(el.dataset.editObs){openObs(db.observations.find(function(o){return o.id===el.dataset.editObs;}));return;}
   if(el.dataset.add==='trade'){openTrade();return;}
   if(el.dataset.add==='obs'){openObs();return;}
-  if(el.id==='fab'){if(tab==='obs')openObs();else openTrade();return;}
+  if(el.id==='fab'){openTrade();return;}
   if(el.hasAttribute('data-close')){closeSheets();return;}
   var seg=el.closest('[data-seg]');if(seg){var f=el.closest('form');setSeg(f,seg.dataset.seg,el.dataset.v);if(f.id==='tradeForm')recalc();if(seg.dataset.seg==='kind')obsKind();return;}
   if(el.hasAttribute('data-rmshot')){var f2=el.closest('form'),k=f2.id==='tradeForm'?'trade':'obs';editingShot[k]='';showShot(f2,'');return;}
@@ -785,12 +866,16 @@ document.addEventListener('click',function(e){
   if(el.id==='expJson'){exportFile('trading-journal-backup-'+stamp()+'.json',JSON.stringify(db,null,1),'application/json');return;}
   if(el.id==='expCsv'){exportFile('trading-journal-'+stamp()+'.csv',toCSV(),'text/csv');return;}
   if(el.id==='impBtn'){$('#importFile').click();return;}
-  if(el.id==='wipe'){if(confirm('Erase ALL trades and notes on this device? Export a backup first!')&&confirm('Really erase everything?')){db=normalize({settings:db.settings});save();toast('Erased');}return;}
+  if(el.id==='wipe'){if(confirm('Erase ALL trades and notes on this device? Export a backup first!')&&confirm('Really erase everything?')){db=normalize({settings:db.settings,checklist:{items:db.checklist.items,days:{}}});save();toast('Erased');}return;}
 });
 $('#viewer').addEventListener('click',function(){this.classList.remove('open');});
 $('#tradeForm').addEventListener('input',function(e){var n=e.target.name;if(n==='pnl'){this.dataset.pnlManual=e.target.value.trim()?'1':'';this.dataset.pnlSource='';}if(n==='r')this.dataset.rManual=e.target.value.trim()?'1':'';recalc();});
 $('#tradeForm').addEventListener('submit',saveTrade);
-$('#obsForm').addEventListener('submit',saveObs);
+document.addEventListener('input',function(e){var id=e.target.dataset&&e.target.dataset.ckedit;if(!id)return;var it=db.checklist.items.find(function(i){return i.id===id;});if(it){it.text=e.target.value;persist();}});
+document.addEventListener('keydown',function(e){if(e.target.id==='ckNew'&&e.key==='Enter'){e.preventDefault();$('#ckAdd').click();}});
+function showTab(name){tab=name;$$('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===name);});['dash','trades','check','more'].forEach(function(t){$('#tab-'+t).classList.toggle('hide',t!==tab);});
+  $('#fab').classList.toggle('hide',tab==='more'||tab==='check');document.body.classList.toggle('tab-check',tab==='check');if(tab==='check'&&ckRendered!==ckToday())renderCheck();window.scrollTo(0,0);}
+document.addEventListener('visibilitychange',function(){if(!document.hidden&&ckRendered!==ckToday()){render();}});
 $$('[data-shot]').forEach(function(inp){inp.addEventListener('change',function(){var f=inp.closest('form'),k=f.id==='tradeForm'?'trade':'obs',file=inp.files&&inp.files[0];if(!file)return;resizeImage(file,function(u){editingShot[k]=u;showShot(f,u);});});});
 $('#importFile').addEventListener('change',function(){readFileInput(this);});
 $('#brokerFile').addEventListener('change',function(){readFileInput(this);});
@@ -801,7 +886,7 @@ document.addEventListener('submit',function(e){if(e.target.id!=='setForm')return
 ['fFrom','fTo'].forEach(function(id){$('#'+id).addEventListener('change',function(){filt.from=$('#fFrom').value;filt.to=$('#fTo').value;filt.preset='custom';render();});});
 $('#fSetup').addEventListener('change',function(){filt.setup=this.value;render();});
 
-window.__journal={get db(){return db;},handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay};
+window.__journal={get db(){return db;},ckStats:ckStats,handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay};
 render();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW registration failed',e);});});}
