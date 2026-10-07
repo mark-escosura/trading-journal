@@ -17,8 +17,8 @@
 :root{--bg:#0d1117;--card:#161b22;--card2:#1f2630;--line:#2d3640;--text:#e6edf3;--mut:#8b949e;--g:#2ecc71;--r:#ff5c5c;--b:#4da3ff;--y:#f5c542;--rad:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
-body{padding:env(safe-area-inset-top) 0 calc(84px + env(safe-area-inset-bottom))}
-header{background:var(--bg);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
+body{padding:0 0 calc(84px + env(safe-area-inset-bottom))}
+header{background:var(--bg);padding:calc(10px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 12px max(14px,env(safe-area-inset-left));border-bottom:1px solid var(--line)}
 header h1{font-size:19px;margin:0 0 8px}
 header h1 small{color:var(--mut);font-weight:400;font-size:13px}
 main{padding:12px 14px;max-width:760px;margin:0 auto}
@@ -81,19 +81,40 @@ textarea{min-height:90px;resize:vertical}
 svg text{fill:var(--mut);font-size:11px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:#2b3440;color:#fff;padding:10px 16px;border-radius:10px;z-index:40;display:none;max-width:90%}
 .hide{display:none!important}
+button,input,select,textarea{-webkit-appearance:none;appearance:none;margin:0}
+input[type=checkbox]{-webkit-appearance:checkbox;appearance:auto;width:22px;height:22px;min-height:0}
+select{background:var(--card2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238b949e' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 12px center/12px 8px;padding-right:34px;color:var(--text)}
+input[type=date],input[type=time]{display:block;min-width:0;width:100%;text-align:left}
+input::-webkit-date-and-time-value{text-align:left}
+.seg5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.seg5 .chip,.frow .chip{min-width:0;min-height:40px;padding:0 4px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:20px}
+.frow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:8px;margin-top:8px}
+.frow>*{min-width:0}
+.frow select{min-height:40px;padding-top:0;padding-bottom:0;font-size:15px;border-radius:20px}
+#customRow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.dl{position:relative;display:block;margin:0}
+.dl span{position:absolute;left:12px;top:5px;font-size:10px;line-height:1;color:var(--mut);pointer-events:none;text-transform:uppercase;letter-spacing:.05em}
+.dl input{min-height:46px;padding:17px 10px 5px 12px;font-size:15px}
+.chip.on{background:var(--b);border-color:var(--b);color:#fff}
+.impcard{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.impcard .btn{flex:1;min-height:54px;font-size:17px}
+.hdrbtns{display:flex;gap:8px}
 @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
 <body>
 <header>
   <h1>Trading Journal <small id="acctLabel">Topstep $50K Static</small></h1>
-  <div class="chips" id="presetChips">
-    <button class="chip on" data-p="all">All</button><button class="chip" data-p="today">Today</button><button class="chip" data-p="week">This week</button><button class="chip" data-p="month">This month</button><button class="chip" data-p="30">Last 30d</button>
+  <div class="seg5" id="presetChips" role="group" aria-label="Date range">
+    <button type="button" class="chip on" data-p="all">All</button><button type="button" class="chip" data-p="today">Today</button><button type="button" class="chip" data-p="week">Week</button><button type="button" class="chip" data-p="month">Month</button><button type="button" class="chip" data-p="30">30 days</button>
   </div>
-  <div class="filters">
-    <input type="date" id="fFrom" aria-label="From date">
-    <input type="date" id="fTo" aria-label="To date">
+  <div class="frow">
+    <button type="button" class="chip" id="customBtn">📅 Custom</button>
     <select id="fSetup" aria-label="Setup"><option value="">All setups</option></select>
+  </div>
+  <div class="frow hide" id="customRow">
+    <label class="dl"><span>From</span><input type="date" id="fFrom" aria-label="From date"></label>
+    <label class="dl"><span>To</span><input type="date" id="fTo" aria-label="To date"></label>
   </div>
 </header>
 
@@ -193,6 +214,8 @@ svg text{fill:var(--mut);font-size:11px}
 </form>
 </div>
 
+<div class="sheet" id="impSheet"><div id="impBody" style="max-width:760px;margin:0 auto"></div></div>
+<input type="file" id="brokerFile" accept=".csv,text/csv,text/comma-separated-values,application/vnd.ms-excel,text/plain" class="hide">
 <div class="viewer" id="viewer"><img alt=""></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="importFile" accept=".csv,.json,text/csv,application/json" class="hide">
@@ -202,12 +225,13 @@ svg text{fill:var(--mut);font-size:11px}
 'use strict';
 var KEY='mnqJournal.v1', TZ='America/Los_Angeles';
 var DEFAULT_SETTINGS={account:'Topstep $50K Static',startBalance:50000,profitTarget:4000,maxLossFloor:48000,dailyLossLimit:1000,consistencyPct:55,accountStart:'',
-  instruments:{MNQ:{pv:2,fee:1.24},NQ:{pv:20,fee:0},MES:{pv:5,fee:0},ES:{pv:50,fee:0}}};
+  importTz:'America/Los_Angeles',mappings:{},
+  instruments:{MNQ:{pv:2,fee:1.24},NQ:{pv:20,fee:0},MES:{pv:5,fee:0},ES:{pv:50,fee:0},M2K:{pv:5,fee:0},RTY:{pv:50,fee:0},MYM:{pv:0.5,fee:0},YM:{pv:5,fee:0},MGC:{pv:10,fee:0},GC:{pv:100,fee:0},MCL:{pv:100,fee:0},CL:{pv:1000,fee:0}}};
 var SEED={version:1,trades:[],
   observations:[],
   settings:DEFAULT_SETTINGS};
 
-var db=load(), filt={from:'',to:'',setup:'',preset:'all'}, tab='dash';
+var db=load(), filt={from:'',to:'',setup:'',preset:'all'}, tab='dash', customOpen=false;
 
 function load(){
   var raw=null;try{raw=localStorage.getItem(KEY);}catch(e){}
@@ -217,6 +241,7 @@ function load(){
 function normalize(d){
   d=d||{};d.trades=d.trades||[];d.observations=d.observations||[];
   var s=d.settings||{};var out={};for(var k in DEFAULT_SETTINGS)out[k]=(s[k]!==undefined?s[k]:JSON.parse(JSON.stringify(DEFAULT_SETTINGS[k])));
+  for(var ik in DEFAULT_SETTINGS.instruments)if(!out.instruments[ik])out.instruments[ik]=JSON.parse(JSON.stringify(DEFAULT_SETTINGS.instruments[ik]));
   d.settings=out;d.version=1;return d;
 }
 function persist(d){
@@ -255,7 +280,7 @@ function rOf(t){return has(t.r)?num(t.r):autoR(t);}
 
 /* ---------- filtering ---------- */
 function inRange(d){return (!filt.from||d>=filt.from)&&(!filt.to||d<=filt.to);}
-function sortT(a,b){return (a.date+(a.time||'')).localeCompare(b.date+(b.time||''));}
+function sortT(a,b){return (a.date+(a.time||'')).localeCompare(b.date+(b.time||''))||((a.entryTs||0)-(b.entryTs||0));}
 function filteredTrades(){return db.trades.filter(function(t){return inRange(t.date)&&(!filt.setup||(t.setup||'')===filt.setup);}).sort(sortT);}
 function setPreset(p){var n=nowPT().date;filt.preset=p;
   if(p==='all'){filt.from='';filt.to='';}
@@ -263,7 +288,7 @@ function setPreset(p){var n=nowPT().date;filt.preset=p;
   else if(p==='week'){var w=dow(n);filt.from=addDays(n,-(w===0?6:w-1));filt.to=n;}
   else if(p==='month'){filt.from=n.slice(0,8)+'01';filt.to=n;}
   else if(p==='30'){filt.from=addDays(n,-29);filt.to=n;}
-  $('#fFrom').value=filt.from;$('#fTo').value=filt.to;render();}
+  customOpen=false;$('#fFrom').value=filt.from;$('#fTo').value=filt.to;render();}
 
 /* ---------- stats ---------- */
 function stats(ts){
@@ -289,6 +314,9 @@ function render(){
   var sel=$('#fSetup'),cur=filt.setup;sel.innerHTML='<option value="">All setups</option>'+Object.keys(setups).sort().map(function(s){return '<option'+(s===cur?' selected':'')+'>'+esc(s)+'</option>';}).join('');
   $('#setupList').innerHTML=Object.keys(setups).map(function(s){return '<option value="'+esc(s)+'">';}).join('');
   $$('#presetChips .chip').forEach(function(c){c.classList.toggle('on',c.dataset.p===filt.preset);});
+  var cb=$('#customBtn');cb.classList.toggle('on',filt.preset==='custom');
+  cb.textContent=filt.preset==='custom'&&(filt.from||filt.to)?'📅 '+(filt.from?filt.from.slice(5).replace('-','/'):'…')+'–'+(filt.to?filt.to.slice(5).replace('-','/'):'…'):'📅 Custom';
+  $('#customRow').classList.toggle('hide',!(customOpen||filt.preset==='custom'));
   $('#acctLabel').textContent=db.settings.account;
   renderDash();renderTrades();renderObs();renderMore();
 }
@@ -302,6 +330,9 @@ function renderDash(){
   var cushion=tp.balance-S.maxLossFloor, cushPct=Math.max(0,Math.min(100,cushion/(S.startBalance-S.maxLossFloor+S.profitTarget)*100));
   var dLoss=Math.max(0,-tp.todayP), dPct=Math.min(100,dLoss/S.dailyLossLimit*100), dLeft=S.dailyLossLimit-dLoss;
   var breached=tp.balance<=S.maxLossFloor, dllHit=dLoss>=S.dailyLossLimit, passed=tp.total>=S.profitTarget;
+  var needs=db.trades.filter(function(t){return t.importKeys&&t.importKeys.length&&!t.followed;}).length;
+  h+='<div class="impcard"><button type="button" class="btn pri" data-import id="dashImport">📥 Import trades CSV</button></div>'+
+    '<div class="small mut" style="margin:-6px 2px 12px">TopstepX › Trades tab › Export, then pick the file here.'+(needs?' <b style="color:var(--y)">'+needs+' imported trade'+(needs===1?'':'s')+' need your stop / rules check.</b>':'')+'</div>';
   h+='<div class="card" id="topstepCard"><h2>Topstep tracker</h2>'+
    '<div class="row"><div><div class="small mut">Balance</div><div class="big '+cls(tp.total)+'" id="tsBalance">'+money(tp.balance)+'</div></div>'+
    '<div style="text-align:right"><div class="small mut">Account P&amp;L</div><div class="v '+cls(tp.total)+'" style="font-size:20px;font-weight:700">'+money(tp.total,1)+'</div></div></div>'+
@@ -353,14 +384,14 @@ function equitySVG(ts){
 }
 function renderTrades(){
   var ts=filteredTrades().slice().reverse();
-  var h='<div class="row" style="margin-bottom:10px"><b>'+ts.length+' trade'+(ts.length===1?'':'s')+'</b><button class="btn pri" data-add="trade">+ Trade</button></div>';
+  var h='<div class="row" style="margin-bottom:10px"><b>'+ts.length+' trade'+(ts.length===1?'':'s')+'</b><div class="hdrbtns"><button type="button" class="btn" data-import id="tradesImport">📥 Import CSV</button><button type="button" class="btn pri" data-add="trade">+ Trade</button></div></div>';
   if(!ts.length)h+='<div class="empty">No trades in this range. No invented trades here — log real ones with +.</div>';
   ts.forEach(function(t){var p=pnlOf(t),r=rOf(t);
     h+='<div class="item" data-edit-trade="'+esc(t.id)+'"><div class="main">'+
       '<div class="row"><span><span class="badge '+t.direction+'">'+(t.direction==='short'?'SHORT':'LONG')+'</span> <b>'+esc(t.contracts)+' '+esc(t.instrument)+'</b></span><b class="'+cls(p)+'">'+money(p,1)+'</b></div>'+
       '<div class="small mut">'+fmtDate(t.date)+(t.time?' · '+fmtTime(t.time):'')+(t.exitTime?' → '+fmtTime(t.exitTime):'')+'</div>'+
       '<div class="small">'+fmtPx(t.entry)+' → '+fmtPx(t.exit)+' · stop '+fmtPx(t.stop)+(isFinite(r)?' · <b class="'+cls(r)+'">'+(r>0?'+':'')+r.toFixed(2)+'R</b>':'')+'</div>'+
-      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':'var(--g)')+'">'+(t.followed==='no'?'✗ broke rules':'✓ followed rules')+'</span></div>'+
+      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':t.followed==='yes'?'var(--g)':'var(--y)')+'">'+(t.followed==='no'?'✗ broke rules':t.followed==='yes'?'✓ followed rules':'? rules not set')+'</span>'+(t.broker?'<span class="tag">📥 '+esc(t.broker)+(t.parts>1?' · '+t.parts+' fills':'')+'</span>':'')+'</div>'+
       (t.notes?'<div class="small mut" style="margin-top:4px;white-space:pre-wrap">'+esc(t.notes.length>140?t.notes.slice(0,140)+'…':t.notes)+'</div>':'')+
       '</div>'+(t.screenshot?'<img src="'+t.screenshot+'" alt="">':'')+'</div>';});
   $('#tab-trades').innerHTML=h;
@@ -381,7 +412,7 @@ function renderMore(){
   var S=db.settings,used=0;try{used=(localStorage.getItem(KEY)||'').length;}catch(e){}
   var h='<div class="card"><h2>Backup &amp; sync</h2><p class="small mut" style="margin-top:0">Your journal lives only in this browser on this device. Export a backup regularly (e.g. weekly) and import it on another device to move your data.</p>'+
    '<div class="btns"><button class="btn pri" id="expJson">Export JSON (full)</button><button class="btn" id="expCsv">Export CSV</button></div>'+
-   '<div style="height:10px"></div><button class="btn full" id="impBtn">Import CSV or JSON…</button>'+
+   '<div style="height:10px"></div><button class="btn full" id="impBtn">Import backup (JSON/CSV) or broker CSV…</button>'+
    '<div class="hint">JSON keeps screenshots; CSV doesn\'t (opens in Excel/Sheets). Import merges by ID — existing entries with the same ID are updated, nothing else is removed.</div>'+
    '<div class="hint">Storage used: ~'+(used/1024).toFixed(0)+' KB of roughly 5,000 KB available.</div></div>';
   h+='<div class="card"><h2>Account settings</h2><form id="setForm">'+
@@ -407,8 +438,8 @@ function openTrade(t){
   var f=$('#tradeForm'),n=nowPT();f.reset();
   t=t||{id:'',date:n.date,time:n.time,instrument:'MNQ',direction:'long',contracts:2,setup:'Midpoint rule',followed:'yes'};
   f.elements.eid.value=t.id||'';['date','time','instrument','contracts','entry','stop','target','exit','exitTime','setup','notes'].forEach(function(k){f.elements[k].value=t[k]==null?'':t[k];});
-  setSeg(f,'direction',t.direction||'long');setSeg(f,'followed',t.followed||'yes');
-  f.dataset.pnlManual=t.pnlManual?'1':'';f.dataset.rManual=t.rManual?'1':'';
+  setSeg(f,'direction',t.direction||'long');setSeg(f,'followed',t.id?(t.followed||''):'yes');
+  f.dataset.pnlManual=t.pnlManual?'1':'';f.dataset.rManual=t.rManual?'1':'';f.dataset.pnlSource=t.pnlManual&&t.pnlSource?t.pnlSource:'';
   f.elements.pnl.value=t.pnlManual&&has(t.pnl)?t.pnl:'';f.elements.r.value=t.rManual&&has(t.r)?t.r:'';
   editingShot.trade=t.screenshot||'';showShot(f,editingShot.trade);
   $('#tradeTitle').textContent=t.id?'Edit trade':'New trade';$('[data-delete]',f).classList.toggle('hide',!t.id);
@@ -418,7 +449,7 @@ function recalc(){
   var f=$('#tradeForm'),t=formTrade(),p=autoPnl(t),r=autoR(t),i=inst(t.instrument);
   if(!f.dataset.pnlManual)f.elements.pnl.value=isFinite(p)?p.toFixed(2):'';
   if(!f.dataset.rManual)f.elements.r.value=isFinite(r)?r.toFixed(2):'';
-  $('#pnlMode').textContent=f.dataset.pnlManual?'(manual)':'(auto)';$('#rMode').textContent=f.dataset.rManual?'(manual)':'(auto)';
+  $('#pnlMode').textContent=f.dataset.pnlManual?(f.dataset.pnlSource?'(from '+f.dataset.pnlSource+')':'(manual)'):'(auto)';$('#rMode').textContent=f.dataset.rManual?'(manual)':'(auto)';
   var e=num(t.entry),s=num(t.stop),tg=num(t.target),c=num(t.contracts)||0,ph='';
   if(!isNaN(e)&&!isNaN(s)&&e!==s){var risk=Math.abs(e-s);ph='Risk '+risk.toFixed(2)+' pts'+(i?' ≈ '+money(risk*i.pv*c+i.fee*c)+' incl. fees':'');
     if(!isNaN(tg))ph+=' · target = '+(Math.abs(tg-e)/risk).toFixed(2)+'R';
@@ -436,6 +467,8 @@ function saveTrade(ev){
   t.pnl=t.pnlManual?(has(pv)?num(pv):''):(isFinite(autoPnl(t))?autoPnl(t):'');
   t.r=t.rManual?(has(rv)?num(rv):''):(isFinite(autoR(t))?autoR(t):'');
   t.screenshot=editingShot.trade||'';
+  t.pnlSource=t.pnlManual?(f.dataset.pnlSource||''):'';
+  if(t.id){var old=db.trades.find(function(x){return x.id===t.id;});if(old)t=Object.assign({},old,t);}
   if(!t.id){t.id=uid();db.trades.push(t);}else{var i=db.trades.findIndex(function(x){return x.id===t.id;});if(i<0)db.trades.push(t);else db.trades[i]=t;}
   if(save()){closeSheets();toast('Trade saved · '+money(pnlOf(t),1));}
 }
@@ -463,11 +496,11 @@ function resizeImage(file,cb){
     cb(c.toDataURL('image/jpeg',0.7));};img.onerror=function(){alert('Could not read that image.');};img.src=rd.result;};rd.readAsDataURL(file);}
 
 /* ---------- CSV / JSON ---------- */
-var COLS=['kind','id','date','time','instrument','direction','contracts','entry','stop','target','exit','exit_time','pnl','pnl_manual','r','r_manual','setup','followed_rules','notes','tags','text'];
+var COLS=['kind','id','date','time','instrument','direction','contracts','entry','stop','target','exit','exit_time','pnl','pnl_manual','r','r_manual','setup','followed_rules','notes','tags','text','fees','broker','import_keys'];
 function csvCell(v){v=v==null?'':String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
 function toCSV(){
   var rows=[COLS.join(',')];
-  db.trades.slice().sort(sortT).forEach(function(t){rows.push(['trade',t.id,t.date,t.time,t.instrument,t.direction,t.contracts,t.entry,t.stop,t.target,t.exit,t.exitTime,pnlOf(t),t.pnlManual?'yes':'no',has(t.r)?t.r:'',t.rManual?'yes':'no',t.setup,t.followed,t.notes,'',''].map(csvCell).join(','));});
+  db.trades.slice().sort(sortT).forEach(function(t){rows.push(['trade',t.id,t.date,t.time,t.instrument,t.direction,t.contracts,t.entry,t.stop,t.target,t.exit,t.exitTime,pnlOf(t),t.pnlManual?'yes':'no',has(t.r)?t.r:'',t.rManual?'yes':'no',t.setup,t.followed,t.notes,'','',has(t.fees)?t.fees:'',t.broker||'',(t.importKeys||[]).join(' ')].map(csvCell).join(','));});
   db.observations.slice().sort(sortT).forEach(function(o){rows.push([o.kind==='skip'?'skip':'observation',o.id,o.date,o.time,'','','','','','','','','','','','',o.setup||'',o.followed||'','',(o.tags||[]).join('; '),o.text].map(csvCell).join(','));});
   return rows.join('\r\n')+'\r\n';}
 function parseCSV(s){var rows=[],row=[],cell='',q=false,i=0;s=s.replace(/^\uFEFF/,'');
@@ -483,6 +516,7 @@ function importCSV(text){
       setup:o.setup||'',followed:(o.followed_rules||'').toLowerCase()==='no'?'no':((o.followed_rules||'')?'yes':''),notes:o.notes||'',screenshot:''};
       t.pnlManual=(o.pnl_manual||'').toLowerCase()==='yes';t.rManual=(o.r_manual||'').toLowerCase()==='yes';
       t.pnl=has(o.pnl)?num(o.pnl):(isFinite(autoPnl(t))?autoPnl(t):'');t.r=has(o.r)?num(o.r):(isFinite(autoR(t))?autoR(t):'');
+      if(o.import_keys){t.importKeys=o.import_keys.split(/\s+/).filter(Boolean);t.broker=o.broker||'';t.pnlSource=t.pnlManual?t.broker:'';}if(has(o.fees))t.fees=num(o.fees);
       if(t.date){upsert(db.trades,t);n++;}}
     else{var ob={id:o.id||uid(),kind:kind==='skip'?'skip':'observation',date:o.date,time:o.time||'',text:o.text||o.notes||'',tags:(o.tags||'').split(/[;|]/).map(function(s){return s.trim();}).filter(Boolean),screenshot:''};
       if(ob.kind==='skip'){ob.setup=o.setup||'';ob.followed=(o.followed_rules||'yes').toLowerCase()==='no'?'no':'yes';}
@@ -499,12 +533,243 @@ function exportFile(name,text,mime){
   var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},1500);toast('Exported '+name);}
 function stamp(){return nowPT().date;}
 
+/* ---------- broker CSV import (TopstepX, Tradovate, NinjaTrader, TradingView, custom) ---------- */
+var ZONES={PT:'America/Los_Angeles',ET:'America/New_York',CT:'America/Chicago',UTC:'UTC'};
+var ZONE_LABEL={'America/Los_Angeles':'Pacific (PT)','America/Chicago':'Central (CT)','America/New_York':'Eastern (ET)','UTC':'UTC'};
+var ABBR={EST:-300,EDT:-240,CST:-360,CDT:-300,MST:-420,MDT:-360,PST:-480,PDT:-420,UTC:0,GMT:0,Z:0};
+function pnum(v){if(v==null)return NaN;var s=String(v).trim();if(!s)return NaN;
+  var neg=/^\(.*\)$/.test(s)||/^[-\u2212]/.test(s)||/^\$\s*[-\u2212]/.test(s)||/^\$\(/.test(s);
+  s=s.replace(/[^0-9.eE]/g,'').replace(/[eE]/g,'');if(!s)return NaN;var n=Number(s);return isNaN(n)?NaN:(neg?-n:n);}
+function tzOffsetMin(zone,ms){var p={};new Intl.DateTimeFormat('en-US',{timeZone:zone,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}).formatToParts(new Date(ms)).forEach(function(x){p[x.type]=x.value;});
+  return Math.round((Date.UTC(+p.year,+p.month-1,+p.day,(+p.hour)%24,+p.minute,+p.second)-ms)/60000);}
+function wallToUTC(y,mo,d,h,mi,s,zone){var g=Date.UTC(y,mo-1,d,h,mi,s),o=tzOffsetMin(zone,g),u=g-o*60000,o2=tzOffsetMin(zone,u);if(o2!==o)u=g-o2*60000;return u;}
+function parseDT(v,zone){var s=String(v==null?'':v).trim(),m;if(!s)return null;
+  if(/^\d{10}(\.\d+)?$/.test(s))return {ms:Math.round(+s*1000),zoned:true};
+  if(/^\d{13}$/.test(s))return {ms:+s,zoned:true};
+  var y,mo,d,h=0,mi=0,se=0,ap='',z='';
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2})(?:[.,]\d+)?)?)?\s*(.*)$/))){y=+m[1];mo=+m[2];d=+m[3];h=+(m[4]||0);mi=+(m[5]||0);se=+(m[6]||0);z=m[7]||'';}
+  else if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})(?:[T\s,]+(\d{1,2}):(\d{2})(?::(\d{2})(?:[.,]\d+)?)?\s*([AaPp][Mm])?)?\s*(.*)$/))){mo=+m[1];d=+m[2];y=+m[3];if(y<100)y+=2000;h=+(m[4]||0);mi=+(m[5]||0);se=+(m[6]||0);ap=(m[7]||'').toUpperCase();z=m[8]||'';}
+  else{var t=Date.parse(s);return isNaN(t)?null:{ms:t,zoned:/Z$|[+-]\d{2}:?\d{2}$|GMT|UTC/.test(s)};}
+  if(ap==='PM'&&h<12)h+=12;if(ap==='AM'&&h===12)h=0;
+  z=z.trim().toUpperCase();var base=Date.UTC(y,mo-1,d,h,mi,se);
+  if(!z)return {ms:wallToUTC(y,mo,d,h,mi,se,zone),zoned:false};
+  if((m=z.match(/^(?:UTC|GMT)?\s*([+-])(\d{1,2}):?(\d{2})?$/))){var off=((+m[2])*60+(+(m[3]||0)))*(m[1]==='-'?-1:1);return {ms:base-off*60000,zoned:true};}
+  if(ABBR.hasOwnProperty(z))return {ms:base-ABBR[z]*60000,zoned:true};
+  if(ZONES[z])return {ms:wallToUTC(y,mo,d,h,mi,se,ZONES[z]),zoned:true};
+  return {ms:wallToUTC(y,mo,d,h,mi,se,zone),zoned:false};}
+function ptParts(ms){var p={};new Intl.DateTimeFormat('en-US',{timeZone:TZ,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(ms)).forEach(function(x){p[x.type]=x.value;});
+  return {date:p.year+'-'+p.month+'-'+p.day,time:((+p.hour)%24<10?'0':'')+((+p.hour)%24)+':'+p.minute};}
+function rootOf(c){var s=String(c||'').toUpperCase().trim(),m;if(!s)return '';
+  s=s.replace(/^.*:/,'');
+  if((m=s.match(/^CON\.F\.[A-Z]+\.([A-Z0-9]+)\.[A-Z]\d+$/)))return m[1];
+  s=s.replace(/^F\.US\./,'').split(/[\s.]/)[0].replace(/\d*!$/,'');
+  if((m=s.match(/^([A-Z0-9]+?)([FGHJKMNQUVXZ])(\d{1,4})$/)))return m[1];
+  return s;}
+function normH(h){return String(h||'').replace(/^\uFEFF/,'').trim().toLowerCase().replace(/[^a-z0-9]/g,'');}
+function hasAll(H,a){return a.every(function(k){return H.indexOf(k)>=0;});}
+function hasAny(H,a){return a.some(function(k){return H.indexOf(k)>=0;});}
+function first(r,a){for(var i=0;i<a.length;i++){var v=r[a[i]];if(v!=null&&String(v).trim()!=='')return String(v).trim();}return '';}
+function feeSum(r,cols){var t=0,any=false;cols.forEach(function(c){if(r[c]!=null&&String(r[c]).trim()!==''){var n=pnum(r[c]);if(isFinite(n)){t+=Math.abs(n);any=true;}}});return any?t:NaN;}
+var FORMATS=[
+  {id:'topstepx',short:'TopstepX',name:'TopstepX / ProjectX — Trades export',kind:'rt',
+   test:function(H){return hasAll(H,['contractname','enteredat','exitedat','entryprice','exitprice','size','type']);},
+   map:function(r){return {id:first(r,['id']),symbol:r.contractname,dir:r.type,size:r.size,entryTime:r.enteredat,exitTime:r.exitedat,entry:r.entryprice,exit:r.exitprice,pnl:r.pnl,fees:feeSum(r,['fees','commissions'])};}},
+  {id:'tradovate-perf',short:'Tradovate',name:'Tradovate — Performance report',kind:'rt',
+   test:function(H){return hasAll(H,['buyprice','sellprice','boughttimestamp','soldtimestamp','qty']);},
+   map:function(r,zone){var b=parseDT(r.boughttimestamp,zone),s=parseDT(r.soldtimestamp,zone),L=!(b&&s)||b.ms<=s.ms;
+     return {id:(r.buyfillid||r.sellfillid)?(r.buyfillid||'')+'/'+(r.sellfillid||''):'',symbol:r.symbol,dir:L?'long':'short',size:r.qty,entryTime:L?r.boughttimestamp:r.soldtimestamp,exitTime:L?r.soldtimestamp:r.boughttimestamp,entry:L?r.buyprice:r.sellprice,exit:L?r.sellprice:r.buyprice,pnl:r.pnl,fees:NaN};}},
+  {id:'ninja-trades',short:'NinjaTrader',name:'NinjaTrader — Trade Performance › Trades export',kind:'rt',
+   test:function(H){return hasAll(H,['instrument','marketpos','entryprice','exitprice','entrytime','exittime']);},
+   map:function(r){return {id:r.tradenumber?String(r.tradenumber)+'@'+r.entrytime:'',symbol:r.instrument,dir:r.marketpos,size:first(r,['qty','quantity']),entryTime:r.entrytime,exitTime:r.exittime,entry:r.entryprice,exit:r.exitprice,pnl:r.profit,fees:feeSum(r,['commission','clearingfee','exchangefee','ipfee','nfafee'])};}},
+  {id:'tradovate-orders',short:'Tradovate',name:'Tradovate — Orders export (fills)',kind:'fills',
+   test:function(H){return hasAll(H,['contract','bs'])&&hasAny(H,['avgfillprice','avgprice'])&&hasAny(H,['filltime','timestamp']);},
+   map:function(r){return {id:first(r,['orderid']),symbol:r.contract,side:r.bs,qty:first(r,['filledqty','quantity']),price:first(r,['avgfillprice','avgprice']),time:first(r,['filltime','timestamp']),status:r.status,fee:NaN};}},
+  {id:'tradingview',short:'TradingView',name:'TradingView — order History export (fills)',kind:'fills',
+   test:function(H){return hasAll(H,['symbol','side','fillprice','status','qty']);},
+   map:function(r){return {id:first(r,['orderid']),symbol:r.symbol,side:r.side,qty:r.qty,price:r.fillprice,time:first(r,['closingtime','placingtime','time']),status:r.status,fee:feeSum(r,['commission'])};}},
+  {id:'ninja-exec',short:'NinjaTrader',name:'NinjaTrader — Executions export (fills)',kind:'fills',
+   test:function(H){return hasAll(H,['instrument','action','quantity','price','time']);},
+   map:function(r){return {id:first(r,['id','executionid']),symbol:r.instrument,side:r.action,qty:r.quantity,price:r.price,time:r.time,status:'',fee:feeSum(r,['commission'])};}}
+];
+var SYN={symbol:['contractname','symbol','contract','instrument','ticker','market','product','root'],
+  dir:['type','direction','side','marketpos','position','longshort','bs','buysell'],
+  size:['size','qty','quantity','contracts','filledqty','lots','volume','units'],
+  entryTime:['enteredat','entrytime','entrydate','entrydatetime','opentime','opendate','opened','timeopened','openedat','boughttimestamp'],
+  exitTime:['exitedat','exittime','exitdate','exitdatetime','closetime','closedate','closed','timeclosed','closedat','soldtimestamp'],
+  entry:['entryprice','openprice','avgentryprice','entry','priceopen','buyprice'],
+  exit:['exitprice','closeprice','avgexitprice','exit','priceclose','sellprice'],
+  pnl:['pnl','pl','profit','profitloss','netpnl','realizedpnl','grosspnl','profitusd','netprofit','realizedpl','gainloss'],
+  fees:['fees','fee','commission','commissions','comm','totalfees'],
+  id:['id','tradeid','tradenumber','orderid','ticket','executionid'],
+  side:['side','bs','action','buysell','direction','type'],
+  price:['fillprice','avgfillprice','price','avgprice','executionprice'],
+  time:['filltime','time','exectime','executiontime','timestamp','datetime','closingtime','date'],
+  status:['status']};
+var MAP_FIELDS={rt:[['symbol','Symbol / contract'],['dir','Long / Short'],['size','Size (contracts)',1],['entryTime','Entry time',1],['exitTime','Exit time'],['entry','Entry price',1],['exit','Exit price',1],['pnl','P&L $'],['fees','Fees / commissions $'],['id','Trade ID']],
+  fills:[['symbol','Symbol / contract'],['side','Buy / Sell',1],['qty','Quantity',1],['price','Fill price',1],['time','Fill time',1],['fee','Fee / commission $'],['id','Order / fill ID'],['status','Status']]};
+function readTable(text){var rows=parseCSV(text),hi=0;
+  for(var i=0;i<Math.min(rows.length,15);i++){if(rows[i].filter(function(c){return String(c).trim()!=='';}).length>=3){hi=i;break;}}
+  var raw=(rows[hi]||[]).map(function(h){return String(h).replace(/^\uFEFF/,'').trim();}),H=raw.map(normH);
+  var objs=rows.slice(hi+1).filter(function(r){return r.some(function(c){return String(c).trim()!=='';});}).map(function(r){var o={};H.forEach(function(h,j){if(!h)return;var v=r[j]==null?'':String(r[j]);if(o[h]==null||String(o[h]).trim()==='')o[h]=v;});return o;});
+  return {raw:raw,H:H,rows:objs};}
+function detectFormat(H){for(var i=0;i<FORMATS.length;i++)if(FORMATS[i].test(H))return FORMATS[i];return null;}
+function sideOf(v){var s=String(v||'').trim().toLowerCase();if(/^(b|buy|bot|bought|long)|buy/.test(s))return 1;if(/^(s|sell|sld|sold|short)|sell/.test(s))return -1;return 0;}
+function dirOf(v){var s=String(v||'').trim().toLowerCase();if(/short|^s$|sell/.test(s))return 'short';if(/long|^l$|^b$|buy/.test(s))return 'long';return '';}
+function r4(x){return Math.round(x*10000)/10000;}
+function finalizeTrade(t){
+  var I=inst(t.symbol),pv=I?I.pv:NaN,pts=t.dir==='long'?t.exit-t.entry:t.entry-t.exit,gross=isFinite(pv)?Math.round(pts*pv*t.size*100)/100:NaN;
+  var feesKnown=isFinite(t.fees),fees=feesKnown?Math.round(t.fees*100)/100:(I&&I.fee?Math.round(I.fee*t.size*100)/100:0),net;
+  if(isFinite(t.pnlRaw)){
+    if(fees&&isFinite(gross)&&Math.abs(t.pnlRaw-(gross-fees))<0.015&&Math.abs(t.pnlRaw-gross)>=0.015)net=t.pnlRaw; /* broker P&L already net */
+    else net=t.pnlRaw-fees;}
+  else net=isFinite(gross)?gross-fees:NaN;
+  t.gross=gross;t.feesUsed=fees;t.feesEstimated=!feesKnown&&fees>0;t.net=isFinite(net)?Math.round(net*100)/100:NaN;return t;}
+function buildTrades(fmt,table,zone){
+  var ctx={unzoned:false,bad:0,notFilled:0,open:0,rows:table.rows.length,parts:0},list=[];
+  if(fmt.kind==='rt'){
+    table.rows.forEach(function(r){var m=fmt.map(r,zone),e=parseDT(m.entryTime,zone),x=parseDT(m.exitTime,zone);
+      var size=Math.abs(pnum(m.size)),en=pnum(m.entry),ex=pnum(m.exit),pl=pnum(m.pnl),dir=dirOf(m.dir);
+      if(!e||!isFinite(en)||!isFinite(ex)||!size){ctx.bad++;return;}
+      if(!e.zoned||(x&&!x.zoned))ctx.unzoned=true;
+      if(!dir){dir=(isFinite(pl)&&pl<0)===(ex>en)?'short':'long';}
+      var contract=String(m.symbol||'').trim()||'MNQ',xm=x?x.ms:e.ms;
+      var keys=['k:'+contract+'|'+Math.round(e.ms/1000)+'|'+Math.round(xm/1000)+'|'+en+'|'+ex+'|'+size];
+      if(m.id)keys.unshift(fmt.id+':'+m.id);
+      list.push({contract:contract,symbol:rootOf(contract)||'MNQ',dir:dir,size:size,eVal:en*size,xVal:ex*size,eMs:e.ms,xMs:xm,pnlRaw:pl,fees:m.fees,keys:keys,parts:1});});
+    /* combine partial exits / scale-ins of the same position (overlapping time, same contract & side) */
+    list.sort(function(a,b){return a.eMs-b.eMs||a.xMs-b.xMs;});
+    var open={},out=[];
+    list.forEach(function(t){var k=t.contract+'|'+t.dir,g=open[k];
+      if(g&&(t.eMs<g.xMs||t.eMs===g.eMs)){g.size+=t.size;g.eVal+=t.eVal;g.xVal+=t.xVal;g.xMs=Math.max(g.xMs,t.xMs);
+        g.pnlRaw=(isFinite(g.pnlRaw)&&isFinite(t.pnlRaw))?g.pnlRaw+t.pnlRaw:NaN;g.fees=(isFinite(g.fees)||isFinite(t.fees))?(isFinite(g.fees)?g.fees:0)+(isFinite(t.fees)?t.fees:0):NaN;
+        g.keys=g.keys.concat(t.keys);g.parts++;ctx.parts++;}
+      else{open[k]=t;out.push(t);}});
+    list=out;
+  }else{
+    var fills=[];
+    table.rows.forEach(function(r,idx){var m=fmt.map(r,zone);
+      if(m.status&&!/fill/i.test(m.status)){ctx.notFilled++;return;}
+      if(m.status&&/cancel|reject/i.test(m.status)){ctx.notFilled++;return;}
+      var t=parseDT(m.time,zone),q=Math.abs(pnum(m.qty)),p=pnum(m.price),sd=sideOf(m.side);
+      if(!t||!q||!isFinite(p)||!sd){ctx.bad++;return;}
+      if(!t.zoned)ctx.unzoned=true;
+      var contract=String(m.symbol||'').trim()||'MNQ';
+      fills.push({contract:contract,side:sd,qty:q,price:p,ms:t.ms,fee:isFinite(m.fee)?m.fee:NaN,idx:idx,id:m.id});});
+    fills.sort(function(a,b){return a.ms-b.ms||a.idx-b.idx;});
+    var pos={};
+    fills.forEach(function(f){var q=f.qty;
+      while(q>1e-9){var p=pos[f.contract];
+        if(!p){p=pos[f.contract]={contract:f.contract,symbol:rootOf(f.contract)||'MNQ',dir:f.side>0?'long':'short',sd:f.side,net:0,size:0,eVal:0,xVal:0,xQty:0,eMs:f.ms,xMs:f.ms,fees:NaN,nf:0};}
+        var share=q/f.qty,used;
+        if(f.side===p.sd){used=q;p.net+=q;p.size+=q;p.eVal+=q*f.price;}
+        else{used=Math.min(q,p.net);p.net-=used;p.xQty+=used;p.xVal+=used*f.price;p.xMs=f.ms;}
+        if(isFinite(f.fee))p.fees=(isFinite(p.fees)?p.fees:0)+f.fee*(used/f.qty);
+        p.nf++;q-=used;
+        if(p.net<=1e-9){var avgE=p.eVal/p.size;
+          list.push({contract:p.contract,symbol:p.symbol,dir:p.dir,size:p.size,eVal:p.eVal,xVal:p.xVal,eMs:p.eMs,xMs:p.xMs,pnlRaw:NaN,fees:p.fees,parts:p.nf,
+            keys:['fx:'+p.contract+'|'+Math.round(p.eMs/1000)+'|'+p.dir+'|'+r4(avgE)+'|'+p.size+'|'+Math.round(p.xMs/1000)]});
+          if(p.nf>2)ctx.parts+=p.nf-2;
+          delete pos[f.contract];}
+      }});
+    for(var k in pos)ctx.open++;
+  }
+  list.forEach(function(t){t.entry=r4(t.eVal/t.size);t.exit=r4(t.xVal/t.size);finalizeTrade(t);});
+  return {trades:list,ctx:ctx};}
+var lastImport=null;
+function keyIndex(){var ix={};db.trades.forEach(function(t){(t.importKeys||[]).forEach(function(k){ix[k]=t.id;});});return ix;}
+function runImport(fmt,table,zone,fileName){
+  var snap=JSON.stringify(db.trades),res=buildTrades(fmt,table,zone),ix=keyIndex(),batch='imp-'+Date.now().toString(36);
+  var added=[],dups=0,merged=[],seenSig={};
+  res.trades.forEach(function(t){
+    var sig=t.keys.join(',');if(seenSig[sig]){dups++;return;}seenSig[sig]=1;
+    if(t.keys.some(function(k){return ix[k];})){dups++;return;}
+    var e=ptParts(t.eMs),x=ptParts(t.xMs);
+    var obj={date:e.date,time:e.time,instrument:t.symbol,direction:t.dir,contracts:t.size,entry:t.entry,stop:'',target:'',exit:t.exit,exitTime:x.time,
+      pnl:isFinite(t.net)?t.net:'',pnlManual:isFinite(t.net),pnlSource:fmt.short,fees:t.feesUsed,feesEstimated:t.feesEstimated,r:'',rManual:false,
+      importKeys:t.keys,importBatch:batch,broker:fmt.short,contract:t.contract,entryTs:t.eMs,exitTs:t.xMs,parts:t.parts};
+    /* match a trade Mark logged by hand: same day, instrument, side, entry within 1 pt, time within 10 min */
+    var man=db.trades.find(function(m){if(m.importKeys&&m.importKeys.length)return false;if(m.date!==obj.date||String(m.instrument).toUpperCase()!==obj.instrument||m.direction!==obj.direction)return false;
+      if(has(m.entry)&&Math.abs(num(m.entry)-obj.entry)>1)return false;
+      if(m.time){var a=+m.time.slice(0,2)*60+(+m.time.slice(3,5)),b=+obj.time.slice(0,2)*60+(+obj.time.slice(3,5));if(Math.abs(a-b)>10)return false;}return true;});
+    if(man){['time','contracts','entry','exit','exitTime','pnl','pnlManual','pnlSource','fees','feesEstimated','importKeys','importBatch','broker','contract','entryTs','exitTs','parts'].forEach(function(k){man[k]=obj[k];});
+      if(!man.rManual){var rr=autoR(man);man.r=isFinite(rr)?rr:'';}
+      t.keys.forEach(function(k){ix[k]=man.id;});merged.push(man);return;}
+    obj.id=uid();obj.setup='Midpoint rule';obj.followed='';obj.notes='';obj.screenshot='';
+    db.trades.push(obj);t.keys.forEach(function(k){ix[k]=obj.id;});added.push(obj);});
+  var ok=persist();render();
+  lastImport={snap:snap,fmt:fmt,table:table,zone:zone,fileName:fileName,added:added,merged:merged,dups:dups,ctx:res.ctx,saved:ok};
+  showImportSummary();return lastImport;}
+function undoImport(){if(!lastImport)return;db.trades=JSON.parse(lastImport.snap);persist();render();}
+function importSummaryText(L){var s='Added '+L.added.length+' trade'+(L.added.length===1?'':'s')+', skipped '+L.dups+' duplicate'+(L.dups===1?'':'s');
+  if(L.merged.length)s+=', updated '+L.merged.length+' trade'+(L.merged.length===1?'':'s')+' you logged by hand';return s;}
+function showImportSummary(){var L=lastImport,c=L.ctx,net=0;L.added.concat(L.merged).forEach(function(t){var p=pnlOf(t);if(isFinite(p))net+=p;});
+  var est=L.added.some(function(t){return t.feesEstimated;});
+  var h='<div class="top"><span></span><h3>Import complete</h3><button type="button" class="btn pri" data-imp="done">Done</button></div>'+
+    '<div class="card" style="margin-top:12px"><div id="impSummary" style="font-size:20px;font-weight:800;line-height:1.3">'+esc(importSummaryText(L))+'</div>'+
+    '<div class="small mut" style="margin-top:6px">'+esc(L.fileName||'file')+' · '+esc(L.fmt.name)+'</div>'+
+    ((L.added.length||L.merged.length)?'<div style="margin-top:8px">Net P&amp;L of imported trades: <b class="'+cls(net)+'">'+money(net,1)+'</b></div>':'')+
+    '<ul class="small" style="margin:10px 0 0;padding-left:18px;color:var(--mut)">'+
+      '<li>'+c.rows+' row'+(c.rows===1?'':'s')+' read</li>'+
+      (c.parts?'<li>'+c.parts+' partial-fill row'+(c.parts===1?'':'s')+' merged into '+(c.parts===1?'its':'their')+' trade</li>':'')+
+      (c.open?'<li>'+c.open+' open position'+(c.open===1?'':'s')+' without an exit yet — not imported</li>':'')+
+      (c.notFilled?'<li>'+c.notFilled+' cancelled/unfilled order row'+(c.notFilled===1?'':'s')+' ignored</li>':'')+
+      (c.bad?'<li class="neg">'+c.bad+' row'+(c.bad===1?'':'s')+' couldn\'t be read</li>':'')+
+      (est?'<li>No fees in this file — estimated with your $'+inst('MNQ').fee+'/contract MNQ setting</li>':'')+
+      (L.added.length?'<li>Stop, target and "followed rules" are blank — tap a trade to fill them in</li>':'')+
+      (L.saved?'':'<li class="neg">Could not save (storage full)</li>')+
+    '</ul>'+
+    (c.unzoned?'<label for="impTz">Times in this file have no timezone. They were read as:</label><select id="impTz">'+
+      Object.keys(ZONE_LABEL).map(function(z){return '<option value="'+z+'"'+(z===L.zone?' selected':'')+'>'+ZONE_LABEL[z]+'</option>';}).join('')+'</select>':'')+
+    '</div>';
+  var rows=L.added.concat(L.merged).slice().sort(sortT).reverse();
+  rows.forEach(function(t){var p=pnlOf(t);h+='<div class="item"><div class="main"><div class="row"><span><span class="badge '+t.direction+'">'+(t.direction==='short'?'SHORT':'LONG')+'</span> <b>'+esc(t.contracts)+' '+esc(t.instrument)+'</b>'+(L.merged.indexOf(t)>=0?' <span class="tag">updated</span>':'')+'</span><b class="'+cls(p)+'">'+money(p,1)+'</b></div>'+
+    '<div class="small mut">'+fmtDate(t.date)+' · '+fmtTime(t.time)+(t.exitTime?' → '+fmtTime(t.exitTime):'')+' PT'+(t.parts>1?' · '+t.parts+' fills':'')+'</div><div class="small">'+fmtPx(t.entry)+' → '+fmtPx(t.exit)+(t.fees?' · fees '+money(t.fees):'')+'</div></div></div>';});
+  if(L.added.length||L.merged.length)h+='<button type="button" class="btn dan full" data-imp="undo" style="margin-top:6px">Undo this import</button>';
+  $('#impBody').innerHTML=h;openSheet('impSheet');}
+function guessCol(H,field){var syn=SYN[field]||[];for(var i=0;i<syn.length;i++){var j=H.indexOf(syn[i]);if(j>=0)return H[j];}
+  for(i=0;i<syn.length;i++){for(var k=0;k<H.length;k++){if(H[k]&&H[k].indexOf(syn[i])>=0&&syn[i].length>3)return H[k];}}return '';}
+var pendingMap=null;
+function openMapping(table,fileName){
+  var H=table.H,g={};['entry','exit','entryTime','exitTime'].forEach(function(f){g[f]=guessCol(H,f);});
+  var mode=((g.entry&&g.exit)||(g.entryTime&&g.exitTime))?'rt':'fills';pendingMap={table:table,fileName:fileName,mode:mode};renderMapping();openSheet('impSheet');}
+function renderMapping(){var P=pendingMap,T=P.table,H=T.H,sample=T.rows[0]||{};
+  var opts=function(sel){return '<option value="">— not in file —</option>'+H.map(function(h,i){if(!h)return '';var sv=sample[h]==null?'':String(sample[h]);return '<option value="'+esc(h)+'"'+(h===sel?' selected':'')+'>'+esc(T.raw[i])+(sv?' (e.g. '+esc(sv.slice(0,18))+')':'')+'</option>';}).join('');};
+  var h='<div class="top"><button type="button" class="btn" data-close>Cancel</button><h3>Match columns</h3><button type="button" class="btn pri" data-imp="map">Import</button></div>'+
+    '<p class="small mut">I didn\'t recognize this file ('+esc(P.fileName||'')+', '+T.rows.length+' rows), so tell me which column is which. Your choice is remembered for files with the same columns.</p>'+
+    '<label>Each row is…</label><div class="seg" id="mapMode"><button type="button" data-mode="rt" class="'+(P.mode==='rt'?'on':'')+'">A whole trade</button><button type="button" data-mode="fills" class="'+(P.mode==='fills'?'on':'')+'">One fill (buy/sell)</button></div>';
+  MAP_FIELDS[P.mode].forEach(function(f){var key=f[0],syn=key==='qty'?'size':key==='fee'?'fees':key;h+='<label>'+f[1]+(f[2]?' *':'')+'</label><select data-map="'+key+'">'+opts(guessCol(H,syn))+'</select>';});
+  h+='<label>Times without a timezone are in</label><select id="mapTz">'+Object.keys(ZONE_LABEL).map(function(z){return '<option value="'+z+'"'+(z===(db.settings.importTz||TZ)?' selected':'')+'>'+ZONE_LABEL[z]+'</option>';}).join('')+'</select><div class="hint">* required</div>';
+  $('#impBody').innerHTML=h;}
+function customFormat(mode,map){return {id:'custom',short:'CSV',name:'Custom column mapping',kind:mode,map:function(r){var o={};Object.keys(map).forEach(function(k){o[k]=map[k]?r[map[k]]:'';});
+  if(mode==='rt'){o.fees=map.fees?feeSum(r,[map.fees]):NaN;}else{o.qty=o.qty;o.fee=map.fee?feeSum(r,[map.fee]):NaN;}return o;}};}
+function sigOf(H){return H.join('|');}
+function handleImportText(name,text){
+  if(/\.json$/i.test(name||'')||/^\s*[\[{]/.test(text)){var n=importJSON(text);save();toast('Restored '+n+' entries from backup');return;}
+  var T=readTable(text);if(!T.H.length||!T.rows.length)throw new Error('No rows found in this CSV.');
+  if(T.H.indexOf('kind')>=0&&(T.H.indexOf('pnlmanual')>=0||T.H.indexOf('followedrules')>=0)){var n2=importCSV(text);save();toast('Imported '+n2+' journal entries');return;}
+  var fmt=detectFormat(T.H);
+  if(!fmt){var saved=(db.settings.mappings||{})[sigOf(T.H)];if(saved)fmt=customFormat(saved.mode,saved.map);}
+  if(fmt)return runImport(fmt,T,db.settings.importTz||TZ,name);
+  openMapping(T,name);}
+function readFileInput(inp){var file=inp.files&&inp.files[0];if(!file)return;var rd=new FileReader();
+  rd.onload=function(){try{handleImportText(file.name,String(rd.result));}catch(err){alert('Import failed: '+err.message);}inp.value='';};rd.readAsText(file);}
+
 /* ---------- events ---------- */
 document.addEventListener('click',function(e){
   var el=e.target.closest('button,[data-edit-trade],[data-edit-obs],.item img');if(!el)return;
   if(el.matches('.item img')){e.stopPropagation();$('#viewer img').src=el.src;$('#viewer').classList.add('open');return;}
   if(el.dataset.tab){tab=el.dataset.tab;$$('nav button').forEach(function(b){b.classList.toggle('on',b===el);});['dash','trades','obs','more'].forEach(function(t){$('#tab-'+t).classList.toggle('hide',t!==tab);});$('#fab').classList.toggle('hide',tab==='more');window.scrollTo(0,0);return;}
   if(el.dataset.p){setPreset(el.dataset.p);return;}
+  if(el.id==='customBtn'){var isOpen=!$('#customRow').classList.contains('hide');if(isOpen&&filt.preset==='custom'){setPreset('all');return;}customOpen=!isOpen;render();return;}
+  if(el.hasAttribute('data-import')){$('#brokerFile').click();return;}
+  if(el.dataset.imp==='done'){closeSheets();return;}
+  if(el.dataset.imp==='undo'){if(confirm('Remove the trades from this import?')){undoImport();closeSheets();toast('Import undone');}return;}
+  if(el.dataset.mode){pendingMap.mode=el.dataset.mode;renderMapping();return;}
+  if(el.dataset.imp==='map'){var mp={},miss=[];$$('#impBody [data-map]').forEach(function(sel){mp[sel.dataset.map]=sel.value;});
+    MAP_FIELDS[pendingMap.mode].forEach(function(f){if(f[2]&&!mp[f[0]])miss.push(f[1]);});
+    if(miss.length){alert('Please choose: '+miss.join(', '));return;}
+    var z=$('#mapTz').value;db.settings.importTz=z;db.settings.mappings=db.settings.mappings||{};db.settings.mappings[sigOf(pendingMap.table.H)]={mode:pendingMap.mode,map:mp};
+    runImport(customFormat(pendingMap.mode,mp),pendingMap.table,z,pendingMap.fileName);return;}
   if(el.dataset.editTrade){openTrade(db.trades.find(function(t){return t.id===el.dataset.editTrade;}));return;}
   if(el.dataset.editObs){openObs(db.observations.find(function(o){return o.id===el.dataset.editObs;}));return;}
   if(el.dataset.add==='trade'){openTrade();return;}
@@ -515,7 +780,7 @@ document.addEventListener('click',function(e){
   if(el.hasAttribute('data-rmshot')){var f2=el.closest('form'),k=f2.id==='tradeForm'?'trade':'obs';editingShot[k]='';showShot(f2,'');return;}
   if(el.hasAttribute('data-delete')){var f3=el.closest('form'),id=f3.elements.eid.value;if(!confirm('Delete this entry? This cannot be undone.'))return;
     if(f3.id==='tradeForm')db.trades=db.trades.filter(function(t){return t.id!==id;});else db.observations=db.observations.filter(function(o){return o.id!==id;});save();closeSheets();toast('Deleted');return;}
-  if(el.id==='pnlAuto'){$('#tradeForm').dataset.pnlManual='';recalc();return;}
+  if(el.id==='pnlAuto'){$('#tradeForm').dataset.pnlManual='';$('#tradeForm').dataset.pnlSource='';recalc();return;}
   if(el.id==='rAuto'){$('#tradeForm').dataset.rManual='';recalc();return;}
   if(el.id==='expJson'){exportFile('trading-journal-backup-'+stamp()+'.json',JSON.stringify(db,null,1),'application/json');return;}
   if(el.id==='expCsv'){exportFile('trading-journal-'+stamp()+'.csv',toCSV(),'text/csv');return;}
@@ -523,19 +788,20 @@ document.addEventListener('click',function(e){
   if(el.id==='wipe'){if(confirm('Erase ALL trades and notes on this device? Export a backup first!')&&confirm('Really erase everything?')){db=normalize({settings:db.settings});save();toast('Erased');}return;}
 });
 $('#viewer').addEventListener('click',function(){this.classList.remove('open');});
-$('#tradeForm').addEventListener('input',function(e){var n=e.target.name;if(n==='pnl')this.dataset.pnlManual=e.target.value.trim()?'1':'';if(n==='r')this.dataset.rManual=e.target.value.trim()?'1':'';recalc();});
+$('#tradeForm').addEventListener('input',function(e){var n=e.target.name;if(n==='pnl'){this.dataset.pnlManual=e.target.value.trim()?'1':'';this.dataset.pnlSource='';}if(n==='r')this.dataset.rManual=e.target.value.trim()?'1':'';recalc();});
 $('#tradeForm').addEventListener('submit',saveTrade);
 $('#obsForm').addEventListener('submit',saveObs);
 $$('[data-shot]').forEach(function(inp){inp.addEventListener('change',function(){var f=inp.closest('form'),k=f.id==='tradeForm'?'trade':'obs',file=inp.files&&inp.files[0];if(!file)return;resizeImage(file,function(u){editingShot[k]=u;showShot(f,u);});});});
-$('#importFile').addEventListener('change',function(){var file=this.files[0],inp=this;if(!file)return;var rd=new FileReader();rd.onload=function(){
-  try{var txt=String(rd.result),n=/\.json$/i.test(file.name)||/^\s*\{/.test(txt)?importJSON(txt):importCSV(txt);save();toast('Imported '+n+' entries');}catch(err){alert('Import failed: '+err.message);}inp.value='';};rd.readAsText(file);});
+$('#importFile').addEventListener('change',function(){readFileInput(this);});
+$('#brokerFile').addEventListener('change',function(){readFileInput(this);});
+document.addEventListener('change',function(e){if(e.target.id!=='impTz'||!lastImport)return;var L=lastImport,z=e.target.value;undoImport();db.settings.importTz=z;runImport(L.fmt,L.table,z,L.fileName);});
 document.addEventListener('submit',function(e){if(e.target.id!=='setForm')return;e.preventDefault();var f=e.target,S=db.settings;
   S.account=f.elements.account.value.trim()||DEFAULT_SETTINGS.account;['startBalance','profitTarget','maxLossFloor','dailyLossLimit','consistencyPct'].forEach(function(k){if(has(f.elements[k].value))S[k]=num(f.elements[k].value);});
   S.accountStart=f.elements.accountStart.value;if(has(f.elements.mnqPv.value))S.instruments.MNQ.pv=num(f.elements.mnqPv.value);if(has(f.elements.mnqFee.value))S.instruments.MNQ.fee=num(f.elements.mnqFee.value);save();toast('Settings saved');});
 ['fFrom','fTo'].forEach(function(id){$('#'+id).addEventListener('change',function(){filt.from=$('#fFrom').value;filt.to=$('#fTo').value;filt.preset='custom';render();});});
 $('#fSetup').addEventListener('change',function(){filt.setup=this.value;render();});
 
-window.__journal={get db(){return db;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay};
+window.__journal={get db(){return db;},handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay};
 render();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW registration failed',e);});});}
