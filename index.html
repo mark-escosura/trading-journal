@@ -208,6 +208,19 @@ details.acctset[open]{padding-bottom:12px}
 details.acctset input,details.acctset select{background-color:var(--card)}
 .chk{display:flex!important;align-items:center;gap:8px;min-height:48px;margin:0!important;color:var(--text)!important;font-size:14px!important}
 .chk input{flex:none}
+/* TopstepX sync */
+.impcard .btn.sm{flex:0 0 auto;min-width:96px;font-size:15px}
+.syncst{font-size:12.5px;color:var(--mut);margin:-6px 2px 12px}
+.syncrow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.syncrow:first-child{border-top:0}
+.syncrow .ic{flex:none;width:22px;text-align:center;font-size:17px;line-height:1.3}
+.syncrow .nm{font-weight:700}
+.syncrow .ms{font-size:13px;color:var(--mut);margin-top:2px}
+.syncrow.err .ms{color:var(--r)}
+.spin{display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.synpill{display:inline-block;font-size:11px;font-weight:600;color:var(--b);border:1px solid rgba(77,163,255,.45);border-radius:10px;padding:1px 7px;margin-left:4px;white-space:nowrap}
+.hdrbtns .btn{padding:0 12px}
 @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
@@ -334,6 +347,7 @@ details.acctset input,details.acctset select{background-color:var(--card)}
 </form>
 </div>
 
+<div class="sheet" id="syncSheet"><div id="syncBody" style="max-width:760px;margin:0 auto"></div></div>
 <div class="sheet" id="impSheet"><div id="impBody" style="max-width:760px;margin:0 auto"></div></div>
 <input type="file" id="brokerFile" accept=".csv,text/csv,text/comma-separated-values,application/vnd.ms-excel,text/plain" class="hide">
 <div class="viewer" id="viewer"><img alt=""></div>
@@ -351,8 +365,10 @@ var DEFAULT_SETTINGS={account:'Topstep $50K Static',startBalance:50000,profitTar
 /* ---------- Topstep accounts (multi-account, copy trading) ---------- */
 var ACCT_TYPES={static:{startBalance:50000,profitTarget:4000,mll:2000,staticFloor:48000,dailyLossLimit:1000,dllOn:true,maxMinis:4,maxMicros:40,consistencyPct:55},
   standard:{startBalance:50000,profitTarget:3000,mll:2000,staticFloor:48000,dailyLossLimit:1000,dllOn:true,maxMinis:5,maxMicros:50,consistencyPct:55}};
+/* TopstepX share ids (topstepx.com/share/stats?share=<id>) Mark gave on Oct 7, 2026 */
+var TSX_DEFAULT_SHARE={static50k:'28269351',combine1:'28236805',combine2:'28236264'};
 var ACCT_NUM=['startBalance','profitTarget','mll','staticFloor','dailyLossLimit','maxMinis','maxMicros','consistencyPct'];
-function mkAcct(id,name,type,extra){var T=ACCT_TYPES[type]||ACCT_TYPES.standard,a={id:id,name:name,type:type==='static'?'static':'standard',on:true,note:'',startDate:'',asOf:'',openBalance:'',priorBest:'',priorHighEod:'',balanceOverride:''},k;
+function mkAcct(id,name,type,extra){var T=ACCT_TYPES[type]||ACCT_TYPES.standard,a={id:id,name:name,type:type==='static'?'static':'standard',on:true,note:'',startDate:'',asOf:'',openBalance:'',priorBest:'',priorHighEod:'',balanceOverride:'',shareId:TSX_DEFAULT_SHARE[id]||'',sync:null},k;
   for(k in T)a[k]=T[k];for(k in (extra||{}))a[k]=extra[k];return a;}
 /* Opening state from Mark's report on Oct 7, 2026 (correct it in Backup > Topstep accounts) */
 function defaultAccounts(){function op(x){var o={asOf:'2026-10-07',openBalance:50513,priorBest:1497.72,priorHighEod:50513};for(var k in x)o[k]=x[k];return o;}
@@ -362,7 +378,10 @@ function defaultAccounts(){function op(x){var o={asOf:'2026-10-07',openBalance:5
 function fixAcct(a,i){a=a&&typeof a==='object'?a:{};var type=a.type==='static'?'static':'standard',b=mkAcct(String(a.id||('acct'+(i+1))),String(a.name||('Account '+(i+1))),type),d=mkAcct('x','x',type),k;
   for(k in b)if(a[k]!==undefined&&a[k]!==null)b[k]=a[k];b.type=type;
   ACCT_NUM.forEach(function(k){b[k]=(b[k]===''||!isFinite(+b[k]))?d[k]:+b[k];});
-  b.on=b.on!==false;b.dllOn=type==='static'?true:b.dllOn!==false;return b;}
+  b.on=b.on!==false;b.dllOn=type==='static'?true:b.dllOn!==false;
+  /* older data has no shareId: prefill the known TopstepX ids; a blank value the user saved stays blank */
+  if(a.shareId===undefined||a.shareId===null)b.shareId=TSX_DEFAULT_SHARE[b.id]||'';else b.shareId=String(a.shareId);
+  if(!b.sync||typeof b.sync!=='object'||!Array.isArray(b.sync.daily))b.sync=null;return b;}
 function migrateAccounts(s){
   if(Array.isArray(s.accounts)&&s.accounts.length)return s.accounts.map(fixAcct);
   var L=defaultAccounts(),a=L[0];
@@ -409,7 +428,7 @@ function nowPT(){var p={};new Intl.DateTimeFormat('en-US',{timeZone:TZ,year:'num
 function addDays(ds,n){var d=new Date(ds+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
 function dow(ds){return new Date(ds+'T12:00:00Z').getUTCDay();}
 /* Topstep trading day: trades at/after 3:00 PM PT count toward the next trading day */
-function tradingDay(t){var d=t.date;if(!d)return '';if(t.time&&t.time>='15:00')d=addDays(d,1);var w=dow(d);if(w===6)d=addDays(d,2);else if(w===0)d=addDays(d,1);return d;}
+function tradingDay(t){if(t.tradeDay&&t.source==='TopstepX')return t.tradeDay;var d=t.date;if(!d)return '';if(t.time&&t.time>='15:00')d=addDays(d,1);var w=dow(d);if(w===6)d=addDays(d,2);else if(w===0)d=addDays(d,1);return d;}
 function fmtDate(ds){if(!ds)return '';var d=new Date(ds+'T12:00:00Z');return d.toLocaleDateString('en-US',{timeZone:'UTC',weekday:'short',month:'short',day:'numeric',year:'numeric'});}
 function fmtTime(t){if(!t)return '';var h=+t.slice(0,2),m=t.slice(3,5);return ((h%12)||12)+':'+m+(h<12?' AM':' PM');}
 function toast(m){var t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast._t);toast._t=setTimeout(function(){t.style.display='none';},2200);}
@@ -421,6 +440,8 @@ function autoPnl(t){var i=inst(t.instrument);if(!i)return NaN;var e=num(t.entry)
 function autoR(t){var e=num(t.entry),s=num(t.stop),x=num(t.exit);if(isNaN(e)||isNaN(s)||isNaN(x)||e===s)return NaN;var risk=Math.abs(e-s);var pts=t.direction==='short'?e-x:x-e;return Math.round(pts/risk*100)/100;}
 function pnlOf(t){return t.pnlManual&&has(t.pnl)?num(t.pnl):(has(t.pnl)?num(t.pnl):autoPnl(t));}
 function rOf(t){return has(t.r)?num(t.r):autoR(t);}
+/* P&L of a trade on one account: synced copies keep each account's own TopstepX net P&L */
+function pnlFor(t,id){var x=id&&t.tsx&&t.tsx[id];if(x&&isFinite(x.net)&&t.pnlSource==='TopstepX')return x.net;return pnlOf(t);}
 
 /* ---------- filtering ---------- */
 function inRange(d){return (!filt.from||d>=filt.from)&&(!filt.to||d<=filt.to);}
@@ -463,21 +484,30 @@ function curDay(){return tradingDay(nowPT());}
 function dayClosed(d){var n=nowPT(),c=tradingDay(n);return d<c||(d===c&&n.date===c&&n.time>='13:10');}
 function shortDate(ds){return fmtDate(ds).replace(/, \d{4}$/,'');}
 function acctState(a){
-  var hasOpen=!!a.asOf&&has(a.openBalance),open=hasOpen?num(a.openBalance):a.startBalance;
-  var today=curDay(),byDay={},n=0,maxEq=0,maxT=null;
-  db.trades.forEach(function(t){if(!appliesTo(t,a.id))return;var d=tradingDay(t);if(!d||!acctCounts(a,d))return;var p=pnlOf(t);if(!isFinite(p))return;
-    byDay[d]=(byDay[d]||0)+p;n++;
-    if(d===today){var c=num(t.contracts)||0,eq=isMicro(t.instrument)?c/10:c;if(eq>maxEq){maxEq=eq;maxT=t;}}});
-  var days=Object.keys(byDay).sort(),bal=open,hi=Math.max(a.startBalance,open,hasOpen&&has(a.priorHighEod)?num(a.priorHighEod):-Infinity);
-  var prior=a.asOf&&has(a.priorBest)?Math.max(0,num(a.priorBest)):0,best=prior,bestDate=prior>0?'prior':'',bestEx=prior;
-  days.forEach(function(d){var p=byDay[d];bal+=p;if(p>best){best=p;bestDate=d;}if(d!==today&&p>bestEx)bestEx=p;if(dayClosed(d))hi=Math.max(hi,bal);});
+  var sy=acctSynced(a);
+  var hasOpen=!sy&&!!a.asOf&&has(a.openBalance),open=hasOpen?num(a.openBalance):a.startBalance;
+  var today=curDay(),byDay={},n=0,maxEq=0,maxT=null,pendN=0,pend=0;
+  db.trades.forEach(function(t){if(!appliesTo(t,a.id))return;var d=tradingDay(t);if(!d)return;
+    if(d===today){var c=num(t.contracts)||0,eq=isMicro(t.instrument)?c/10:c;if(eq>maxEq){maxEq=eq;maxT=t;}}
+    if(sy){/* synced: TopstepX already has its own trades; only add trades logged by hand after the last sync */
+      if((t.tsx&&t.tsx[a.id])||t.source==='TopstepX'||!((t.createdAt||0)>sy.at))return;}
+    else if(!acctCounts(a,d))return;
+    var p=pnlFor(t,a.id);if(!isFinite(p))return;
+    byDay[d]=(byDay[d]||0)+p;n++;if(sy){pendN++;pend+=p;}});
+  var bal,hi;
+  if(sy){var DD={};sy.daily.forEach(function(x){DD[x.d]=(DD[x.d]||0)+x.net;});for(var k in byDay)DD[k]=(DD[k]||0)+byDay[k];byDay=DD;
+    bal=sy.balance+pend;hi=a.startBalance;sy.daily.forEach(function(x){if(x.closed||dayClosed(x.d))hi=Math.max(hi,x.bal);});n=(sy.trades||0)+pendN;}
+  else{bal=open;hi=Math.max(a.startBalance,open,hasOpen&&has(a.priorHighEod)?num(a.priorHighEod):-Infinity);}
+  var days=Object.keys(byDay).sort();
+  var prior=!sy&&a.asOf&&has(a.priorBest)?Math.max(0,num(a.priorBest)):0,best=prior,bestDate=prior>0?'prior':'',bestEx=prior;
+  days.forEach(function(d){var p=byDay[d];if(!sy){bal+=p;if(dayClosed(d))hi=Math.max(hi,bal);}if(p>best){best=p;bestDate=d;}if(d!==today&&p>bestEx)bestEx=p;});
   bal=Math.round(bal*100)/100;var computed=bal,ovr=has(a.balanceOverride);if(ovr)bal=num(a.balanceOverride);
   var pct=(a.consistencyPct||55)/100,profit=Math.round((bal-a.startBalance)*100)/100;
   var target=Math.max(a.profitTarget,best/pct),targetEx=Math.max(a.profitTarget,bestEx/pct);
   var todayP=Math.round((byDay[today]||0)*100)/100,cap=targetEx*pct,roomToday=cap-Math.max(0,todayP);
   var floor=a.type==='static'?a.staticFloor:Math.min(hi-a.mll,a.startBalance),locked=a.type!=='static'&&hi-a.mll>=a.startBalance;
   var room=bal-floor,dLoss=Math.max(0,-todayP),dllLeft=a.dllOn?a.dailyLossLimit-dLoss:Infinity;
-  return {a:a,open:open,hasOpen:hasOpen,balance:bal,computed:computed,override:ovr,profit:profit,target:target,adjusted:target>a.profitTarget+0.005,remaining:Math.max(0,target-profit),
+  return {a:a,open:open,hasOpen:hasOpen,synced:sy,pendN:pendN,balance:bal,computed:computed,override:ovr,profit:profit,target:target,adjusted:target>a.profitTarget+0.005,remaining:Math.max(0,target-profit),
     progress:Math.max(0,Math.min(100,profit/target*100)),floor:floor,locked:locked,hiEod:hi,room:room,breached:bal<=floor,today:today,todayP:todayP,dLoss:dLoss,dllLeft:dllLeft,
     dllHit:a.dllOn&&dLoss>=a.dailyLossLimit,best:best,bestDate:bestDate,bestPctTarget:target>0?best/target*100:NaN,bestPctProfit:profit>0?best/profit*100:NaN,
     cap:cap,baseCap:a.profitTarget*pct,roomToday:roomToday,lossRoom:Math.min(room,dllLeft),days:days.length,trades:n,maxEq:maxEq,maxT:maxT,overSize:maxEq>a.maxMinis+1e-9,passed:profit>=target&&bal>floor};}
@@ -498,15 +528,15 @@ function acctCardHTML(s){var a=s.a,T=a.type==='static';
   var st=s.breached?['bad','⛔ Floor hit']:s.passed?['pass','🎯 Target hit']:s.dllHit?['bad','⛔ Daily limit hit']:s.overSize?['warn','⚠ Over size']:s.room<500?['warn','⚠ Near floor']:['ok','Active'];
   var span=Math.max(1,a.startBalance+s.target-s.floor),fPct=Math.max(0,Math.min(100,s.room/span*100)),dPct=a.dllOn?Math.min(100,s.dLoss/a.dailyLossLimit*100):0;
   return '<div class="card acct" data-acct="'+esc(a.id)+'">'+
-   '<div class="row"><span style="min-width:0"><b class="aname">'+esc(a.name)+'</b> <span class="tpill">'+(T?'Static':'Trailing')+'</span></span><span class="spill '+st[0]+'">'+st[1]+'</span></div>'+
-   '<div class="row" style="margin-top:4px;align-items:flex-end"><div><div class="small mut">Balance'+(s.override?' (override)':'')+'</div><div class="big '+cls(s.profit)+'" data-k="balance" style="font-size:25px">'+money(s.balance)+'</div></div>'+
+   '<div class="row"><span style="min-width:0"><b class="aname">'+esc(a.name)+'</b> <span class="tpill">'+(T?'Static':'Trailing')+'</span>'+(s.synced?'<span class="synpill" data-k="synced">synced '+esc(fmtStamp(s.synced.at))+'</span>':'')+'</span><span class="spill '+st[0]+'">'+st[1]+'</span></div>'+
+   '<div class="row" style="margin-top:4px;align-items:flex-end"><div><div class="small mut">Balance'+(s.override?' (override)':s.synced?' · TopstepX':'')+'</div><div class="big '+cls(s.profit)+'" data-k="balance" style="font-size:25px">'+money(s.balance)+'</div></div>'+
      '<div style="text-align:right"><div class="small mut">Since start</div><b class="'+cls(s.profit)+'" data-k="profit">'+money(s.profit,1)+'</b></div></div>'+
    '<div class="am"><div class="row"><span>Target <b data-k="target">'+money(s.target)+'</b>'+(s.adjusted?' <span class="tpill" style="color:var(--y)">raised by 55% rule</span>':'')+'</span><b data-k="remaining">'+(s.profit>=s.target?'reached':money(s.remaining)+' to go')+'</b></div><div class="bar thin"><i style="width:'+s.progress+'%;background:var(--g)"></i></div></div>'+
    '<div class="am"><div class="row"><span>Floor <b data-k="floor">'+money(s.floor)+'</b> <span class="mut">'+(T?'static':s.locked?'locked':'trails EOD')+'</span></span><span>room <b data-k="room" class="'+(s.room<500?'neg':'')+'">'+money(s.room)+'</b></span></div><div class="bar thin"><i style="width:'+fPct+'%;background:var(--b)"></i></div></div>'+
    '<div class="am"><div class="row"><span>Today <b data-k="today" class="'+cls(s.todayP)+'">'+money(s.todayP,1)+'</b></span><span class="mut">'+(a.dllOn?'daily limit '+money(a.dailyLossLimit).replace('.00','')+' · <b data-k="dll" class="'+(s.dllLeft<300?'neg':'')+'" style="color:inherit">'+money(Math.max(0,s.dllLeft))+'</b> left':'no daily limit set')+'</span></div>'+(a.dllOn?'<div class="bar thin"><i style="width:'+dPct+'%;background:'+(dPct>=75?'var(--r)':'var(--y)')+'"></i></div>':'')+'</div>'+
    '<div class="am"><div class="row"><span>Best day <b data-k="best">'+money(s.best)+'</b> <span class="mut">'+(isFinite(s.bestPctTarget)?s.bestPctTarget.toFixed(0)+'% of target':'')+'</span></span><span class="mut">cap '+money(s.cap)+'</span></div>'+
      '<div class="row"><span class="mut">Room under 55% cap today</span><b data-k="roomToday" class="'+(s.roomToday<=0?'neg':'pos')+'">'+(s.roomToday<=0?'over cap':money(s.roomToday))+'</b></div></div>'+
-   '<div class="small mut" style="margin-top:6px">Max '+a.maxMinis+' minis / '+a.maxMicros+' micros'+(s.maxT?' · biggest today '+esc(s.maxT.contracts)+' '+esc(s.maxT.instrument):'')+' · '+s.days+' day'+(s.days===1?'':'s')+' logged'+(s.hasOpen?' after '+shortDate(a.asOf)+' opening':a.startDate?' since '+shortDate(a.startDate):'')+'</div></div>';}
+   '<div class="small mut" style="margin-top:6px">Max '+a.maxMinis+' minis / '+a.maxMicros+' micros'+(s.maxT?' · biggest today '+esc(s.maxT.contracts)+' '+esc(s.maxT.instrument):'')+' · '+(s.synced?s.days+' day'+(s.days===1?'':'s')+' from TopstepX ('+esc(s.synced.name||('#'+s.synced.shareId))+')'+(s.pendN?' + '+s.pendN+' trade'+(s.pendN===1?'':'s')+' logged since the sync':'')+' · highest EOD '+money(s.hiEod):s.days+' day'+(s.days===1?'':'s')+' logged'+(s.hasOpen?' after '+shortDate(a.asOf)+' opening':a.startDate?' since '+shortDate(a.startDate):''))+'</div></div>';}
 
 /* ---------- render ---------- */
 function render(){
@@ -528,8 +558,8 @@ function renderDash(){
   var ts=filteredTrades(),s=stats(ts),S=db.settings;
   var h='';
   var needs=db.trades.filter(function(t){return t.importKeys&&t.importKeys.length&&!t.followed;}).length;
-  h+='<div class="impcard"><button type="button" class="btn pri" data-import id="dashImport">📥 Import trades CSV</button></div>'+
-    '<div class="small mut" style="margin:-6px 2px 12px">TopstepX › Trades tab › Export, then pick the file here.'+(needs?' <b style="color:var(--y)">'+needs+' imported trade'+(needs===1?'':'s')+' need your stop / rules check.</b>':'')+'</div>';
+  h+='<div class="impcard"><button type="button" class="btn pri" data-sync id="dashSync"'+(syncing?' disabled':'')+'>'+(syncing?'<span class="spin">⟳</span>&nbsp;Syncing…':'🔄 Sync TopstepX')+'</button><button type="button" class="btn sm" data-import id="dashImport">📥 CSV</button></div>'+
+    '<div class="syncst" id="syncStatus">'+syncStatusText()+(needs?' <b style="color:var(--y)">'+needs+' imported trade'+(needs===1?'':'s')+' need your stop / rules check.</b>':'')+'</div>';
   h+=trackerHTML();
   // stats
   var label=filt.preset==='all'&&!filt.setup?'All trades':'Filtered: '+(filt.from||'start')+' → '+(filt.to||'now')+(filt.setup?' · '+filt.setup:'');
@@ -569,19 +599,19 @@ function equitySVG(ts){
 }
 function renderTrades(){
   var ts=filteredTrades().slice().reverse();
-  var h='<div class="row" style="margin-bottom:10px"><b>'+ts.length+' trade'+(ts.length===1?'':'s')+'</b><div class="hdrbtns"><button type="button" class="btn" data-import id="tradesImport">📥 Import CSV</button><button type="button" class="btn pri" data-add="trade">+ Trade</button></div></div>';
+  var h='<div class="row" style="margin-bottom:10px"><b>'+ts.length+' trade'+(ts.length===1?'':'s')+'</b><div class="hdrbtns"><button type="button" class="btn" data-sync id="tradesSync"'+(syncing?' disabled':'')+'>'+(syncing?'<span class="spin">⟳</span>':'🔄')+' Sync</button><button type="button" class="btn" data-import id="tradesImport">📥 CSV</button><button type="button" class="btn pri" data-add="trade">+ Trade</button></div></div>';
   if(!ts.length)h+='<div class="empty">No trades in this range. No invented trades here — log real ones with +.</div>';
   ts.forEach(function(t){h+=tradeItem(t);});
   $('#tab-trades').innerHTML=h;
 }
 function acctTag(t){if(!Array.isArray(t.accounts)||!t.accounts.length)return '';var out=acctList(true).filter(function(a){return t.accounts.indexOf(a.id)<0;}).map(function(a){return a.name;});
   return out.length?'<span class="tag" style="color:var(--y)">not on '+esc(out.join(', '))+'</span>':'';}
-function tradeItem(t,day){var p=pnlOf(t),r=rOf(t),shifted=day&&t.date!==day;
+function tradeItem(t,day){var p=day&&cal.acct?pnlFor(t,cal.acct):pnlOf(t),r=rOf(t),shifted=day&&t.date!==day&&tradingDay(t)===day;
     return '<div class="item" data-edit-trade="'+esc(t.id)+'"><div class="main">'+
       '<div class="row"><span><span class="badge '+t.direction+'">'+(t.direction==='short'?'SHORT':'LONG')+'</span> <b>'+esc(t.contracts)+' '+esc(t.instrument)+'</b></span><b class="'+cls(p)+'">'+money(p,1)+'</b></div>'+
       '<div class="small mut">'+(day&&!shifted?'':fmtDate(t.date)+' · ')+(t.time?fmtTime(t.time):'no time')+(t.exitTime?' → '+fmtTime(t.exitTime):'')+' PT'+(shifted?' <span style="color:var(--y)">· evening session, counts here</span>':'')+'</div>'+
       '<div class="small">'+fmtPx(t.entry)+' → '+fmtPx(t.exit)+' · stop '+fmtPx(t.stop)+(isFinite(r)?' · <b class="'+cls(r)+'">'+(r>0?'+':'')+r.toFixed(2)+'R</b>':'')+'</div>'+
-      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':t.followed==='yes'?'var(--g)':'var(--y)')+'">'+(t.followed==='no'?'✗ broke rules':t.followed==='yes'?'✓ followed rules':'? rules not set')+'</span>'+(t.broker?'<span class="tag">📥 '+esc(t.broker)+(t.parts>1?' · '+t.parts+' fills':'')+'</span>':'')+(function(){var cs=ckStats(t.date);return cs?'<span class="tag ck-tag" style="color:'+(cs.pct===100?'var(--g)':'var(--y)')+'">☑ checklist '+cs.pct+'%</span>':'';})()+acctTag(t)+'</div>'+
+      '<div><span class="tag">'+esc(t.setup||'No setup')+'</span><span class="tag" style="color:'+(t.followed==='no'?'var(--r)':t.followed==='yes'?'var(--g)':'var(--y)')+'">'+(t.followed==='no'?'✗ broke rules':t.followed==='yes'?'✓ followed rules':'? rules not set')+'</span>'+(t.source==='TopstepX'?'<span class="tag" style="color:var(--b)">🔄 TopstepX'+(t.tsx&&Object.keys(t.tsx).length>1?' ×'+Object.keys(t.tsx).length:'')+(t.pnlDiffers?' · P&amp;L differs by account':'')+'</span>':t.broker?'<span class="tag">📥 '+esc(t.broker)+(t.parts>1?' · '+t.parts+' fills':'')+'</span>':'')+(function(){var cs=ckStats(t.date);return cs?'<span class="tag ck-tag" style="color:'+(cs.pct===100?'var(--g)':'var(--y)')+'">☑ checklist '+cs.pct+'%</span>':'';})()+acctTag(t)+'</div>'+
       (t.notes?'<div class="small mut" style="margin-top:4px;white-space:pre-wrap">'+esc(t.notes.length>140?t.notes.slice(0,140)+'…':t.notes)+'</div>':'')+
       '</div>'+(t.screenshot?'<img src="'+t.screenshot+'" alt="">':'')+'</div>';}
 function obsItem(o){return '<div class="item" data-edit-obs="'+esc(o.id)+'"><div class="main">'+
@@ -623,7 +653,7 @@ var cal={month:'',acct:''},dayOpen='';
 /* notes keep their own date unless written at/after 3:00 PM PT (then they belong to the next trading day, like trades) */
 function noteDay(o){return o.time&&o.time>='15:00'?tradingDay(o):o.date;}
 function dayMap(acct){var M={};function g(d){return M[d]||(M[d]={pnl:0,n:0,w:0,l:0,trades:[],notes:[],skip:false,obs:false,shots:0});}
-  db.trades.forEach(function(t){if(acct&&!appliesTo(t,acct))return;var d=tradingDay(t);if(!d)return;var x=g(d),p=pnlOf(t);x.trades.push(t);x.n++;if(isFinite(p)){x.pnl+=p;if(p>0)x.w++;else if(p<0)x.l++;}if(t.screenshot)x.shots++;});
+  db.trades.forEach(function(t){if(acct&&!appliesTo(t,acct))return;var d=tradingDay(t);if(!d)return;var x=g(d),p=acct?pnlFor(t,acct):pnlOf(t);x.trades.push(t);x.n++;if(isFinite(p)){x.pnl+=p;if(p>0)x.w++;else if(p<0)x.l++;}if(t.screenshot)x.shots++;});
   db.observations.forEach(function(o){var d=noteDay(o);if(!d)return;var x=g(d);x.notes.push(o);if(o.kind==='skip')x.skip=true;else x.obs=true;if(o.screenshot)x.shots++;});
   for(var k in M){M[k].pnl=Math.round(M[k].pnl*100)/100;M[k].trades.sort(sortT);M[k].notes.sort(sortT);}return M;}
 function abbr(v){var a=Math.abs(v),s=v<0?'-':v>0?'+':'';if(a>=9999.5)return s+'$'+Math.round(a/1000)+'k';if(a>=999.5)return s+'$'+(a/1000).toFixed(1).replace(/\.0$/,'')+'k';return s+'$'+Math.round(a);}
@@ -685,6 +715,9 @@ function acctSettingsHTML(){var h='<div class="card" id="acctSettings"><h2>Topst
     h+='<details class="acctset" data-acctset="'+esc(a.id)+'"'+(acctOpen===a.id?' open':'')+'><summary><span>'+esc(a.name)+(a.on?'':' <span class="mut">(hidden)</span>')+'</span><span class="small mut" style="font-weight:400;margin-left:auto">'+(T?'Static':'Trailing')+' · '+money(a.startBalance).replace('.00','')+'</span></summary>'+
      '<form data-acctform="'+esc(a.id)+'" autocomplete="off">'+
      '<label>Name</label><input name="name" value="'+esc(a.name)+'">'+
+     '<label>TopstepX share link or ID</label><input name="shareId" value="'+esc(a.shareId||'')+'" placeholder="https://www.topstepx.com/share/stats?share=…" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="url">'+
+     '<div class="hint">'+(acctSynced(a)?'Synced '+esc(fmtStamp(a.sync.at))+' · '+esc(a.sync.name||'')+' · TopstepX balance '+money(a.sync.balance)+'. The tracker uses TopstepX numbers for this account; the opening state below is only a fallback.':(a.shareId?'Not synced yet — tap 🔄 Sync TopstepX on the Dashboard.':'TopstepX › Performance stats › Share › copy the link, paste it here. Leave blank to track this account by hand.'))+'</div>'+
+     (a.sync?'<button type="button" class="btn full" data-syncclear="'+esc(a.id)+'" style="margin-top:8px">Forget synced balances</button>':'')+
      '<div class="f2"><div><label>Type</label><select name="type" data-accttype><option value="standard"'+(T?'':' selected')+'>Standard</option><option value="static"'+(T?' selected':'')+'>Static</option></select></div><div><label>Dashboard</label><label class="chk"><input type="checkbox" name="on"'+(a.on?' checked':'')+'> Track it</label></div></div>'+
      '<div class="f2">'+fin('Starting balance','startBalance',a.startBalance)+fin('Profit target','profitTarget',a.profitTarget)+'</div>'+
      '<div class="f2"><div data-tonly="static"'+(T?'':' class="hide"')+'><label>Static floor $</label><input name="staticFloor" inputmode="decimal" value="'+a.staticFloor+'"></div><div data-tonly="standard"'+(T?' class="hide"':'')+'><label>Trailing max loss $</label><input name="mll" inputmode="decimal" value="'+a.mll+'"></div>'+fin('Consistency %','consistencyPct',a.consistencyPct)+'</div>'+
@@ -748,7 +781,8 @@ function saveTrade(ev){
   t.screenshot=editingShot.trade||'';
   t.pnlSource=t.pnlManual?(f.dataset.pnlSource||''):'';
   var sa=selAccts(),AL=acctList();t.accounts=(AL.length<2||!sa.length||sa.length===AL.length)?undefined:sa;
-  if(t.id){var old=db.trades.find(function(x){return x.id===t.id;});if(old)t=Object.assign({},old,t);}
+  if(t.id){var old=db.trades.find(function(x){return x.id===t.id;});if(old){t=Object.assign({},old,t);if(old.tradeDay&&(t.date!==old.date||(t.time||'')!==(old.time||'')))t.tradeDay='';}}else t.createdAt=Date.now();
+  if(old&&old.source==='TopstepX'&&Array.isArray(old.accounts)&&sa.length){var hid=old.accounts.filter(function(id){return !AL.some(function(x){return x.id===id;});});t.accounts=sa.concat(hid);}
   if(!t.accounts)delete t.accounts;
   if(!t.id){t.id=uid();db.trades.push(t);}else{var i=db.trades.findIndex(function(x){return x.id===t.id;});if(i<0)db.trades.push(t);else db.trades[i]=t;}
   if(save()){closeSheets();toast('Trade saved · '+money(pnlOf(t),1));}
@@ -1090,6 +1124,155 @@ function handleImportText(name,text){
 function readFileInput(inp){var file=inp.files&&inp.files[0];if(!file)return;var rd=new FileReader();
   rd.onload=function(){try{handleImportText(file.name,String(rd.result));}catch(err){alert('Import failed: '+err.message);}inp.value='';};rd.readAsText(file);}
 
+
+/* ---------- TopstepX sync (public share-stats endpoints; runs only when you tap Sync) ----------
+   The share page topstepx.com/share/stats?share=<id> loads its numbers from userapi.topstepx.com
+   without a login (CORS *). These endpoints are undocumented and could change. One tap = 4-5
+   requests per account (checkSharing, [getAccountName on first sync], Trade/range, daily, todaystats). */
+var TSX_API='https://userapi.topstepx.com',TSX_TIME_TOL=5000,TSX_EPOCH=Date.UTC(2020,0,1),syncing=false,lastSync=null;
+function r2(x){return Math.round(x*100)/100;}
+function parseShareId(v){var s=String(v==null?'':v).trim(),m;if(!s)return '';if((m=s.match(/[?&#]share=(\d{4,12})\b/i)))return m[1];if((m=s.match(/^#?(\d{4,12})$/)))return m[1];return null;}
+function acctSynced(a){var id=parseShareId(a.shareId);return id&&a.sync&&a.sync.shareId===id&&Array.isArray(a.sync.daily)?a.sync:null;}
+function fmtStamp(ms){if(!ms)return '';var p=ptParts(ms),n=nowPT();return (p.date===n.date?'':shortDate(p.date)+', ')+fmtTime(p.time)+' PT';}
+function syncStatusText(){var L=db.settings.accounts.filter(function(a){return parseShareId(a.shareId);}),last=0,err=0;
+  if(!L.length)return 'Add your TopstepX share links in Backup › Topstep accounts to sync. Or import a TopstepX CSV.';
+  L.forEach(function(a){var sy=acctSynced(a);if(sy)last=Math.max(last,sy.at);if(a.syncError)err++;});
+  return (last?'Last synced '+esc(fmtStamp(last)):'Not synced yet')+' · '+L.length+' account'+(L.length===1?'':'s')+' linked'+(err?' · <span class="neg">'+err+' failed last time</span>':'')+'.';}
+function tsxErr(msg,kind){var e=new Error(msg);e.kind=kind;return e;}
+function tsxFetch(path,body,method){
+  var ctl=typeof AbortController!=='undefined'?new AbortController():null,timer=ctl?setTimeout(function(){ctl.abort();},25000):null;
+  var o={method:method||(body!=null?'POST':'GET'),headers:{'Accept':'application/json'},cache:'no-store',credentials:'omit',mode:'cors'};
+  if(body!=null){o.headers['Content-Type']='application/json';o.body=JSON.stringify(body);}
+  if(ctl)o.signal=ctl.signal;
+  return fetch(TSX_API+path,o).then(function(r){clearTimeout(timer);
+      if(!r.ok)throw tsxErr('TopstepX answered HTTP '+r.status+(r.status===429?' (too many requests — wait a few minutes and try again)':r.status===404||r.status===405?' — the share page\'s API may have changed':'')+'.','http');
+      return r.text().then(function(t){if(!t)return null;try{return JSON.parse(t);}catch(x){throw tsxErr('TopstepX sent an unexpected answer (not JSON). The share page\'s API may have changed.','format');}});},
+    function(err){clearTimeout(timer);
+      if(err&&err.name==='AbortError')throw tsxErr('TopstepX took too long to answer (timed out after 25 s). Try again.','timeout');
+      if(navigator.onLine===false)throw tsxErr('No internet connection. Connect and tap Sync again.','offline');
+      throw tsxErr('Couldn\'t reach TopstepX: the network failed or the browser blocked the request (CORS). If it keeps happening, TopstepX may have changed its share page.','network');});}
+/* one TopstepX trade -> normalized */
+function normTsx(x){var size=+x.positionSize,g=+x.pnL||0,f=+x.fees||0,c=+x.commissions||0,cn=String(x.contractDisplayName||'').trim();
+  return {id:String(x.id),contract:cn||String(x.contractId||''),symbol:rootOf(cn||x.contractId)||'',dir:size<0?'long':'short',size:Math.abs(size),
+    entry:+x.entryPrice,exit:x.exitPrice==null?NaN:+x.exitPrice,eMs:Date.parse(x.createdAt),xMs:x.exitedAt?Date.parse(x.exitedAt):NaN,
+    gross:r2(g),fees:r2(f),comm:r2(c),net:r2(g-f-c),tradeDay:x.tradeDay?String(x.tradeDay).slice(0,10):'',voided:!!x.voided};}
+function tsxPriceTol(p){return Math.max(0.01,Math.abs(p)*0.00005);}
+function fillFromTsx(t,x,keys,now){var e=ptParts(x.eMs),xp=ptParts(x.xMs);
+  t.date=e.date;t.time=e.time;t.exitTime=xp.time;t.tradeDay=x.tradeDay||'';t.instrument=x.symbol||'MNQ';t.contract=x.contract;t.direction=x.dir;t.contracts=x.size;t.entry=x.entry;t.exit=x.exit;
+  t.pnl=x.net;t.pnlManual=true;t.pnlSource='TopstepX';t.fees=r2(x.fees+x.comm);t.feesEstimated=false;t.gross=x.gross;
+  if(!t.rManual){var rr=autoR(t);t.r=isFinite(rr)?rr:'';}
+  t.entryTs=x.eMs;t.exitTs=x.xMs;t.source='TopstepX';t.broker='TopstepX';t.syncedAt=now;
+  t.tsxBase={contract:x.contract,dir:x.dir,size:x.size,entry:x.entry,exit:x.exit,eMs:x.eMs,xMs:x.xMs};
+  t.importKeys=(t.importKeys||[]).concat(keys);}
+function manualMs(t){var d=t.date,m=String(t.time||'').match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);if(!d||!m)return NaN;return wallToUTC(+d.slice(0,4),+d.slice(5,7),+d.slice(8,10),+m[1],+m[2],+(m[3]||0),TZ);}
+/* Merge TopstepX trades into the journal.
+   batches=[{acct:'static50k',trades:[normTsx...]},...]. Never touches what you typed (setup, rules, notes,
+   screenshot, stop/target) on trades already in the journal; existing trades only gain account copies. */
+function tsxMerge(trades,batches,opts){opts=opts||{};
+  var now=opts.now||Date.now(),skip=opts.skip||{},synced=opts.synced||batches.map(function(b){return b.acct;}),all=opts.allAccts||synced,ix={};
+  trades.forEach(function(t){(t.importKeys||[]).forEach(function(k){ix[k]=t;});});
+  var res={added:[],linked:[],touched:[],per:{}};
+  function touch(t){if(res.touched.indexOf(t)<0)res.touched.push(t);}
+  batches.forEach(function(b){var A=b.acct,P=res.per[A]={fetched:b.trades.length,added:0,copies:0,linked:0,dups:0,voided:0,open:0,skipped:0};
+    b.trades.slice().sort(function(p,q){return p.eMs-q.eMs||(p.id<q.id?-1:1);}).forEach(function(x){
+      if(x.voided){P.voided++;return;}
+      if(!isFinite(x.exit)||!isFinite(x.xMs)||!isFinite(x.eMs)){P.open++;return;}
+      var key='topstepx:'+x.id;
+      if(ix[key]){P.dups++;return;}
+      if(skip[x.id]){P.skipped++;return;}
+      var rec={id:x.id,net:x.net,gross:x.gross,fees:x.fees,comm:x.comm},keys=[key];
+      /* 1) the same trade copied to another account: same contract, side, size, times within 5 s, same prices */
+      var best=null,bs=Infinity;
+      trades.forEach(function(t){var o=t.tsxBase;if(t.source!=='TopstepX'||!o||!t.tsx||t.tsx[A])return;
+        if(o.contract!==x.contract||o.dir!==x.dir||o.size!==x.size)return;
+        var de=Math.abs(o.eMs-x.eMs),dx=Math.abs(o.xMs-x.xMs);if(de>TSX_TIME_TOL||dx>TSX_TIME_TOL)return;
+        var pe=Math.abs(o.entry-x.entry),px=Math.abs(o.exit-x.exit);if(pe>tsxPriceTol(x.entry)||px>tsxPriceTol(x.exit))return;
+        var sc=de+dx+(pe+px)*1000;if(sc<bs){bs=sc;best=t;}});
+      if(best){best.tsx[A]=rec;if(!Array.isArray(best.accounts))best.accounts=[];if(best.accounts.indexOf(A)<0)best.accounts.push(A);
+        best.importKeys=(best.importKeys||[]).concat(keys);ix[key]=best;P.copies++;
+        var nets=Object.keys(best.tsx).map(function(k){return best.tsx[k].net;});best.pnlDiffers=nets.some(function(v){return Math.abs(v-nets[0])>0.005;});
+        touch(best);return;}
+      /* 2) a trade you logged by hand: same trading day, instrument, side, entry within 60 s and ~1 pt */
+      var e=ptParts(x.eMs),td=x.tradeDay||tradingDay({date:e.date,time:e.time}),man=null,ms=Infinity;
+      trades.forEach(function(t){if(t.source==='TopstepX'||(t.importKeys&&t.importKeys.length))return;if(!appliesTo(t,A))return;
+        if(tradingDay(t)!==td||String(t.instrument||'').toUpperCase()!==x.symbol||t.direction!==x.dir)return;
+        var mm=manualMs(t);if(!isFinite(mm))return;var d=x.eMs-mm,hasSec=/^\d{1,2}:\d{2}:\d{2}/.test(t.time);
+        if(d<-60000||d>(hasSec?60000:119000))return;
+        if(has(t.entry)&&Math.abs(num(t.entry)-x.entry)>Math.max(1,tsxPriceTol(x.entry)))return;
+        var sc=Math.abs(d)+(has(t.entry)?Math.abs(num(t.entry)-x.entry)*1000:0);if(sc<ms){ms=sc;man=t;}});
+      if(man){var keep=all.filter(function(id){return synced.indexOf(id)<0&&appliesTo(man,id);});
+        fillFromTsx(man,x,keys,now);man.tsx={};man.tsx[A]=rec;man.accounts=[A].concat(keep);man.linkedManual=true;
+        ix[key]=man;P.linked++;res.linked.push(man);touch(man);return;}
+      /* 3) new trade, on this account only (copies on other accounts join it above) */
+      var cs=ckStats(e.date),t={id:uid(),stop:'',target:'',r:'',rManual:false,setup:'',followed:cs&&cs.pct===100?'yes':'',notes:'',screenshot:'',createdAt:now,accounts:[A],tsx:{}};
+      fillFromTsx(t,x,keys,now);t.tsx[A]=rec;trades.push(t);ix[key]=t;P.added++;res.added.push(t);touch(t);});});
+  return res;}
+function tsxDaily(raw){return (Array.isArray(raw)?raw:[]).map(function(d){var day=String(d.tradeDay||d.tradeDate||'').slice(0,10);
+    return {d:day,net:r2((+d.totalPnL||0)-(+d.totalFees||0)-(+d.totalCommissions||0)),bal:r2(+d.balance),n:+d.totalTrades||0,closed:dayClosed(day)};})
+  .filter(function(d){return /^\d{4}-\d{2}-\d{2}$/.test(d.d)&&isFinite(d.bal);}).sort(function(a,b){return a.d<b.d?-1:1;});}
+/* newest TopstepX trade already in the journal for this account (incremental sync starts 3 days before it) */
+function tsxLatest(id){var m=0;db.trades.forEach(function(t){if(t.tsx&&t.tsx[id]&&t.entryTs>m)m=t.entryTs;});return m;}
+function fetchAcct(a,now,p){var id=parseShareId(a.shareId),prev=a.sync&&a.sync.shareId===id?a.sync:null,latest=tsxLatest(a.id);
+  function step(m){p.state='busy';p.msg=m;renderSyncSheet();}
+  var out={id:id,full:!latest,requests:0};
+  function call(path,body,method){out.requests++;return tsxFetch(path,body,method);}
+  step('Checking that sharing is on…');
+  return call('/Statistics/checkSharing?tradingAccountId='+id).then(function(on){
+    if(on!==true)throw tsxErr('Sharing is turned off for this account (ID '+id+'). In TopstepX open this account\'s Performance stats, tap Share and switch sharing on, then sync again.','sharing');
+    return prev&&prev.name?prev.name:call('/Statistics/getAccountName?tradingAccountId='+id).then(function(n){return typeof n==='string'?n:'';},function(){return '';});
+  }).then(function(name){out.name=name;step(out.full?'Loading full trade history…':'Loading new trades…');
+    var start=latest?latest-3*86400000:TSX_EPOCH,end=now+2*86400000;out.start=start;
+    return call('/Trade/range',{tradingAccountId:+id,start:new Date(start).toISOString(),end:new Date(end).toISOString()}).then(function(tr){
+      if(!Array.isArray(tr))throw tsxErr('TopstepX sent trades in an unexpected format. The share page\'s API may have changed.','format');
+      out.trades=tr.map(normTsx);step('Loading daily balances…');
+      return call('/Statistics/daily',{tradingAccountId:+id,startTradeDay:new Date(TSX_EPOCH).toISOString(),endTradeDay:new Date(end).toISOString()});});
+  }).then(function(daily){if(!Array.isArray(daily))throw tsxErr('TopstepX sent daily stats in an unexpected format. The share page\'s API may have changed.','format');
+    out.daily=tsxDaily(daily);step('Loading current balance…');
+    return call('/Statistics/todaystats?accountId='+id,null,'POST').catch(function(){return null;});
+  }).then(function(td){var live=Array.isArray(td)&&td[0]&&isFinite(+td[0].balance)?r2(+td[0].balance):NaN;
+    out.balance=isFinite(live)?live:(out.daily.length?out.daily[out.daily.length-1].bal:a.startBalance);return out;});}
+function syncSnapshot(){var S={};db.settings.accounts.forEach(function(a){S[a.id]={sync:a.sync,syncError:a.syncError};});return JSON.stringify({trades:db.trades,acc:S});}
+function runSync(){
+  if(syncing)return lastSync;
+  var L=db.settings.accounts.filter(function(a){return parseShareId(a.shareId);});
+  if(!L.length){alert('No TopstepX share links yet. Add them in Backup › Topstep accounts (TopstepX › Performance stats › Share › copy link).');return null;}
+  syncing=true;var now=Date.now(),prog={};L.forEach(function(a){prog[a.id]={state:'wait',msg:'Waiting…'};});
+  lastSync={running:true,at:now,accts:L.map(function(a){return a.id;}),prog:prog,snap:syncSnapshot(),res:null,fetched:{},errors:0};
+  render();renderSyncSheet();openSheet('syncSheet');
+  var batches=[],chain=Promise.resolve();
+  L.forEach(function(a){chain=chain.then(function(){return fetchAcct(a,now,prog[a.id]).then(function(r){lastSync.fetched[a.id]=r;batches.push({acct:a.id,trades:r.trades});prog[a.id].state='fetched';},
+    function(err){prog[a.id].state='error';prog[a.id].msg=err.message||String(err);prog[a.id].kind=err.kind||'error';lastSync.errors++;a.syncError={at:now,msg:prog[a.id].msg};renderSyncSheet();});});});
+  return chain.then(function(){
+    var skip=db.tsxSkip||{},res=tsxMerge(db.trades,batches,{now:now,skip:skip,synced:L.map(function(a){return a.id;}),allAccts:db.settings.accounts.map(function(a){return a.id;})});
+    L.forEach(function(a){var r=lastSync.fetched[a.id];if(!r)return;var P=res.per[a.id];
+      a.sync={shareId:r.id,name:r.name||'',at:now,balance:r.balance,daily:r.daily,trades:r.daily.reduce(function(t,d){return t+d.n;},0),lastTradeTs:Math.max(tsxLatest(a.id),0)};
+      delete a.syncError;prog[a.id].state='done';
+      prog[a.id].msg=(P.added+P.copies+P.linked)+' new trade'+((P.added+P.copies+P.linked)===1?'':'s')+(P.copies?' ('+P.copies+' matched to the same trade on another account)':'')+(P.linked?' · '+P.linked+' linked to trades you logged':'')+
+        (P.dups?' · '+P.dups+' already in the journal':'')+(P.voided?' · '+P.voided+' voided skipped':'')+(P.skipped?' · '+P.skipped+' you deleted skipped':'')+(P.open?' · '+P.open+' still open':'')+
+        ' · balance '+money(r.balance)+(r.full?' · full history':'');});
+    lastSync.res=res;lastSync.running=false;syncing=false;lastSync.saved=persist();render();renderSyncSheet();
+    if(!$('#syncSheet').classList.contains('open'))toast(syncSummaryText());return lastSync;
+  }).catch(function(err){console.error(err);syncing=false;lastSync.running=false;lastSync.fatal=err.message||String(err);render();renderSyncSheet();return lastSync;});}
+function syncSummaryText(){var S=lastSync;if(!S||!S.res)return S&&S.fatal?'Sync failed':'';var n=S.res.added.length,ok=S.accts.length-S.errors;
+  return (n||S.res.touched.length?'Added '+n+' trade'+(n===1?'':'s'):'No new trades')+' from '+ok+' account'+(ok===1?'':'s')+(S.errors?' · '+S.errors+' failed':'');}
+function undoSync(){var S=lastSync;if(!S||!S.snap)return;var o=JSON.parse(S.snap);db.trades=o.trades;db.settings.accounts.forEach(function(a){var x=o.acc[a.id];if(!x)return;a.sync=x.sync||null;if(x.syncError)a.syncError=x.syncError;else delete a.syncError;});persist();render();}
+function renderSyncSheet(){var S=lastSync,body=$('#syncBody');if(!S||!body)return;
+  var h='<div class="top"><span></span><h3>Sync TopstepX</h3><button type="button" class="btn pri" data-syncdone>'+(S.running?'Hide':'Done')+'</button></div>';
+  if(S.res){var R=S.res,c3=0,c2=0,c1=0;R.touched.forEach(function(t){var k=t.tsx?Object.keys(t.tsx).length:0;if(k>=3)c3++;else if(k===2)c2++;else c1++;});
+    h+='<div class="card" style="margin-top:12px"><div id="syncSummary" style="font-size:20px;font-weight:800;line-height:1.3">'+esc(syncSummaryText())+'</div>'+
+      '<div class="small mut" style="margin-top:6px">Synced '+esc(fmtStamp(S.at))+(S.saved===false?' · <span class="neg">could not save (storage full)</span>':'')+'</div>'+
+      (R.touched.length?'<ul class="small" style="margin:10px 0 0;padding-left:18px;color:var(--mut)" id="syncMatch">'+
+        (S.accts.length>2?'<li><b style="color:var(--text)">'+c3+'</b> trade'+(c3===1?'':'s')+' matched on '+(S.accts.length===3?'all 3':'3+')+' accounts (copy trades), <b style="color:var(--text)">'+c2+'</b> on 2, <b style="color:var(--text)">'+c1+'</b> on one account only</li>':S.accts.length===2?'<li><b style="color:var(--text)">'+c2+'</b> trade'+(c2===1?'':'s')+' matched on both accounts, <b style="color:var(--text)">'+c1+'</b> on one only</li>':'')+
+        (R.linked.length?'<li>'+R.linked.length+' linked to trades you had logged (your notes, setup and stop were kept)</li>':'')+
+        (R.added.length?'<li>Stop, target, setup and "followed rules" are blank — tap a trade to fill them in. Syncing again never changes what you type.</li>':'')+'</ul>':'')+'</div>';}
+  else if(S.fatal)h+='<div class="card neg" style="margin-top:12px">Sync failed: '+esc(S.fatal)+'</div>';
+  h+='<div class="card" id="syncAccts"'+(S.res||S.fatal?'':' style="margin-top:12px"')+'>'+S.accts.map(function(id){var a=acctById(id)||{name:id},p=S.prog[id],ic=p.state==='done'?'✅':p.state==='error'?'⚠️':p.state==='wait'?'•':'<span class="spin">⟳</span>';
+    return '<div class="syncrow'+(p.state==='error'?' err':'')+'" data-syncacct="'+esc(id)+'"><span class="ic">'+ic+'</span><div style="min-width:0"><div class="nm">'+esc(a.name)+'</div><div class="ms">'+esc(p.msg)+'</div></div></div>';}).join('')+'</div>';
+  if(S.running)h+='<div class="small mut" style="margin:0 4px">One request at a time, about 5 per account. Nothing runs in the background.</div>';
+  if(S.res&&S.res.touched.length)h+='<button type="button" class="btn dan full" data-syncundo style="margin-top:6px">Undo this sync</button>';
+  h+='<div class="small mut" style="margin:12px 4px 20px">Uses the same public data your TopstepX share link shows, fetched straight from this phone only when you tap Sync. It relies on TopstepX\'s undocumented share API, which could change.</div>';
+  body.innerHTML=h;}
+
 /* ---------- events ---------- */
 document.addEventListener('click',function(e){
   var el=e.target.closest('button,[data-edit-trade],[data-edit-obs],.item img,.dshots img');if(!el)return;
@@ -1115,6 +1298,10 @@ document.addEventListener('click',function(e){
   if(el.dataset.p){setPreset(el.dataset.p);return;}
   if(el.id==='customBtn'){var isOpen=!$('#customRow').classList.contains('hide');if(isOpen&&filt.preset==='custom'){setPreset('all');return;}customOpen=!isOpen;render();return;}
   if(el.hasAttribute('data-import')){$('#brokerFile').click();return;}
+  if(el.hasAttribute('data-sync')){runSync();return;}
+  if(el.hasAttribute('data-syncdone')){closeSheets();return;}
+  if(el.hasAttribute('data-syncundo')){if(confirm('Remove the trades this sync added and go back to the previous balances?')){undoSync();lastSync=null;closeSheets();toast('Sync undone');}return;}
+  if(el.dataset.syncclear){var sa=acctById(el.dataset.syncclear);if(sa&&confirm('Forget the TopstepX balances for '+sa.name+'? Trades stay. The tracker goes back to the opening state until you sync again.')){sa.sync=null;delete sa.syncError;acctOpen=sa.id;save();toast('Synced balances cleared');}return;}
   if(el.dataset.imp==='done'){closeSheets();return;}
   if(el.dataset.imp==='undo'){if(confirm('Remove the trades from this import?')){undoImport();closeSheets();toast('Import undone');}return;}
   if(el.dataset.mode){pendingMap.mode=el.dataset.mode;renderMapping();return;}
@@ -1132,13 +1319,13 @@ document.addEventListener('click',function(e){
   var seg=el.closest('[data-seg]');if(seg){var f=el.closest('form');setSeg(f,seg.dataset.seg,el.dataset.v);if(f.id==='tradeForm')recalc();if(seg.dataset.seg==='kind')obsKind();return;}
   if(el.hasAttribute('data-rmshot')){var f2=el.closest('form'),k=f2.id==='tradeForm'?'trade':'obs';editingShot[k]='';showShot(f2,'');return;}
   if(el.hasAttribute('data-delete')){var f3=el.closest('form'),id=f3.elements.eid.value;if(!confirm('Delete this entry? This cannot be undone.'))return;
-    if(f3.id==='tradeForm')db.trades=db.trades.filter(function(t){return t.id!==id;});else db.observations=db.observations.filter(function(o){return o.id!==id;});save();closeSheets();toast('Deleted');return;}
+    if(f3.id==='tradeForm'){var dt=db.trades.find(function(t){return t.id===id;});if(dt&&dt.tsx){db.tsxSkip=db.tsxSkip||{};Object.keys(dt.tsx).forEach(function(k){if(dt.tsx[k]&&dt.tsx[k].id)db.tsxSkip[dt.tsx[k].id]=1;});}db.trades=db.trades.filter(function(t){return t.id!==id;});}else db.observations=db.observations.filter(function(o){return o.id!==id;});save();closeSheets();toast('Deleted');return;}
   if(el.id==='pnlAuto'){$('#tradeForm').dataset.pnlManual='';$('#tradeForm').dataset.pnlSource='';recalc();return;}
   if(el.id==='rAuto'){$('#tradeForm').dataset.rManual='';recalc();return;}
   if(el.id==='expJson'){exportFile('trading-journal-backup-'+stamp()+'.json',JSON.stringify(db,null,1),'application/json');return;}
   if(el.id==='expCsv'){exportFile('trading-journal-'+stamp()+'.csv',toCSV(),'text/csv');return;}
   if(el.id==='impBtn'){$('#importFile').click();return;}
-  if(el.id==='wipe'){if(confirm('Erase ALL trades and notes on this device? Export a backup first!')&&confirm('Really erase everything?')){db=normalize({settings:db.settings,checklist:{items:db.checklist.items,days:{}}});save();toast('Erased');}return;}
+  if(el.id==='wipe'){if(confirm('Erase ALL trades and notes on this device? Export a backup first!')&&confirm('Really erase everything?')){db=normalize({settings:db.settings,checklist:{items:db.checklist.items,days:{}}});db.settings.accounts.forEach(function(a){if(a.sync)a.sync.lastTradeTs=0;});save();toast('Erased');}return;}
 });
 $('#viewer').addEventListener('click',function(){this.classList.remove('open');});
 $('#tradeForm').addEventListener('input',function(e){var n=e.target.name;if(n==='pnl'){this.dataset.pnlManual=e.target.value.trim()?'1':'';this.dataset.pnlSource='';}if(n==='r')this.dataset.rManual=e.target.value.trim()?'1':'';recalc();});
@@ -1155,6 +1342,8 @@ $('#brokerFile').addEventListener('change',function(){readFileInput(this);});
 document.addEventListener('change',function(e){if(e.target.id!=='impTz'||!lastImport)return;var L=lastImport,z=e.target.value;undoImport();db.settings.importTz=z;runImport(L.fmt,L.table,z,L.fileName);});
 document.addEventListener('submit',function(e){var f=e.target,S=db.settings;
   if(f.dataset&&f.dataset.acctform){e.preventDefault();var a=acctById(f.dataset.acctform);if(!a)return;
+    var shr=parseShareId(f.elements.shareId.value);if(shr===null){alert('That doesn\'t look like a TopstepX share link. Paste the whole link (…/share/stats?share=12345678) or just the number.');return;}
+    a.shareId=shr;
     a.name=f.elements.name.value.trim()||a.name;a.type=f.elements.type.value==='static'?'static':'standard';a.on=f.elements.on.checked;
     ACCT_NUM.forEach(function(k){var v=f.elements[k].value;if(has(v))a[k]=num(v);});
     a.dllOn=a.type==='static'?true:f.elements.dllOn.checked;a.startDate=f.elements.startDate.value;a.asOf=f.elements.asOf.value;
@@ -1171,7 +1360,7 @@ document.addEventListener('change',function(e){var t=e.target;
 ['fFrom','fTo'].forEach(function(id){$('#'+id).addEventListener('change',function(){filt.from=$('#fFrom').value;filt.to=$('#fTo').value;filt.preset='custom';render();});});
 $('#fSetup').addEventListener('change',function(){filt.setup=this.value;render();});
 
-window.__journal={get db(){return db;},ckStats:ckStats,handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay,acctState:acctState,copyLimits:copyLimits,acctList:acctList,dayMap:dayMap,noteDay:noteDay,openDay:openDay,defaultAccounts:defaultAccounts,normalize:normalize,cal:cal,render:render};
+window.__journal={get db(){return db;},ckStats:ckStats,handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay,acctState:acctState,copyLimits:copyLimits,acctList:acctList,dayMap:dayMap,noteDay:noteDay,openDay:openDay,defaultAccounts:defaultAccounts,normalize:normalize,cal:cal,render:render,tsxMerge:tsxMerge,normTsx:normTsx,parseShareId:parseShareId,runSync:runSync,pnlFor:pnlFor,acctSynced:acctSynced,get lastSync(){return lastSync;},get syncing(){return syncing;},get tsxApi(){return TSX_API;},set tsxApi(v){TSX_API=v;}};
 render();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW registration failed',e);});});}
