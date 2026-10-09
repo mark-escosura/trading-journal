@@ -1,5 +1,5 @@
 /* Trading Journal service worker: offline cache. Bump VERSION when files change. */
-var VERSION = 'tj-v5';
+var VERSION = 'tj-v6';
 var ASSETS = ['./', 'index.html', 'manifest.json', 'apple-touch-icon.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'];
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(ASSETS); }).then(function () { return self.skipWaiting(); }));

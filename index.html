@@ -221,6 +221,56 @@ details.acctset input,details.acctset select{background-color:var(--card)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .synpill{display:inline-block;font-size:11px;font-weight:600;color:var(--b);border:1px solid rgba(77,163,255,.45);border-radius:10px;padding:1px 7px;margin-left:4px;white-space:nowrap}
 .hdrbtns .btn{padding:0 12px}
+/* Insights */
+body.tab-ins header .seg5,body.tab-ins header .frow{display:none!important}
+nav button b{font-size:21px}
+.insnav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 10px}
+.insnav button{min-width:0;min-height:42px;padding:0 2px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:12.5px;font-weight:600;line-height:1.15;white-space:normal}
+.insnav button.on{background:var(--b);border-color:var(--b);color:#fff}
+.insbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px}
+.insbar .calsel{max-width:62%}
+.insnote{font-size:12.5px;color:var(--mut);margin:6px 2px 10px;line-height:1.4}
+.instbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.instbl th{font-size:10.5px;font-weight:600;color:var(--mut);text-align:right;text-transform:uppercase;letter-spacing:.03em;padding:0 0 6px 8px}
+.instbl th:first-child,.instbl td:first-child{text-align:left;padding-left:0}
+.instbl td{padding:7px 0 7px 8px;border-top:1px solid var(--line);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.instbl td:first-child{white-space:normal;padding-left:0;width:40%}
+.instbl td small{display:block;color:var(--mut);font-size:11.5px;white-space:normal}
+.insbig{font-size:28px;font-weight:800;line-height:1.15}
+.inschip{display:inline-block;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:10px;margin:2px 4px 0 0;border:1px solid var(--line);color:var(--mut);background:var(--card2)}
+.inschip.w{color:var(--y);border-color:rgba(245,197,66,.5)}
+.inschip.r{color:var(--r);border-color:rgba(255,92,92,.5)}
+.inschip.g{color:var(--g);border-color:rgba(46,204,113,.5)}
+.inschip.b{color:var(--b);border-color:rgba(77,163,255,.5)}
+.insrow{padding:10px 0;border-top:1px solid var(--line)}
+.insrow:first-of-type{border-top:0}
+.insbtns{display:flex;gap:8px;margin-top:8px}
+.insbtns button{flex:1;min-height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:700;font-size:14px}
+.insbtns button.off{color:var(--r);border-color:rgba(255,92,92,.5)}
+.insbtns button.on{color:var(--g);border-color:rgba(46,204,113,.5)}
+.insmore{width:100%;min-height:44px;margin-top:8px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:600}
+.insban{display:block;width:100%;text-align:left;color:var(--text);margin-bottom:10px;padding:12px 14px;border-radius:var(--rad);border:1px solid var(--y);background:rgba(245,197,66,.08)}
+.insban.t{border-color:var(--b);background:rgba(77,163,255,.09)}
+.insban b{display:block;font-size:15px}
+.insban span{display:block;font-size:13px;color:var(--mut);margin-top:2px}
+.hm{display:grid;gap:3px;margin-top:4px}
+.hm .hh{font-size:11px;color:var(--mut);text-align:center;padding:2px 0}
+.hm .hl{font-size:11px;color:var(--mut);display:flex;align-items:center;justify-content:flex-end;padding-right:5px;white-space:nowrap}
+.hm button.hc{min-width:0;min-height:46px;border-radius:7px;border:1px solid transparent;background:var(--card2);color:var(--text);padding:2px 1px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.15}
+.hm button.hc b{font-size:11.5px;font-weight:700;white-space:nowrap}
+.hm button.hc small{font-size:9.5px;color:rgba(230,237,243,.7)}
+.hm button.hc.lo{border:1px dashed rgba(139,148,158,.55)}
+.hm button.hc.lo b{font-weight:500}
+.hm button.hc.sel{outline:2px solid var(--b);outline-offset:1px}
+.hm button.hc.empty{background:transparent;border:1px solid rgba(45,54,64,.5)}
+.hmseg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0 0 10px}
+.hmseg button{min-width:0;min-height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-size:12.5px;font-weight:600;padding:0 2px}
+.hmseg button.on{background:var(--b);border-color:var(--b);color:#fff}
+.insset label{margin:8px 0 3px}
+.insset .f2{margin-top:2px}
+.insset h3{font-size:13px;margin:16px 0 0;color:var(--text)}
+.insbars i{display:block;height:6px;border-radius:3px;background:var(--b);margin-top:5px}
+.insbars i.hot{background:var(--y)}
 @media(min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
 </style>
 </head>
@@ -244,6 +294,7 @@ details.acctset input,details.acctset select{background-color:var(--card)}
   <section id="tab-dash"></section>
   <section id="tab-trades" class="hide"></section>
   <section id="tab-cal" class="hide"></section>
+  <section id="tab-ins" class="hide"></section>
   <section id="tab-check" class="hide"></section>
   <section id="tab-more" class="hide"></section>
 </main>
@@ -253,6 +304,7 @@ details.acctset input,details.acctset select{background-color:var(--card)}
   <button type="button" data-tab="dash" class="on"><b>📊</b>Dashboard</button>
   <button type="button" data-tab="trades"><b>📒</b>Trades</button>
   <button type="button" data-tab="cal"><b>📅</b>Calendar</button>
+  <button type="button" data-tab="ins"><b>🔎</b>Insights</button>
   <button type="button" data-tab="check"><b>✅</b>Checklist</button>
   <button type="button" data-tab="more"><b>⚙️</b>Backup</button>
 </nav>
@@ -388,6 +440,16 @@ function migrateAccounts(s){
   /* old single-account (Static) settings carry over to the Static account */
   [['startBalance','startBalance'],['profitTarget','profitTarget'],['maxLossFloor','staticFloor'],['dailyLossLimit','dailyLossLimit'],['consistencyPct','consistencyPct']].forEach(function(p){var v=s[p[0]];if(v!==undefined&&v!==''&&v!==null&&isFinite(+v))a[p[1]]=+v;});
   if(s.accountStart)a.startDate=s.accountStart;return L;}
+/* Insights settings: plan rules (Mark's midpoint rule), overtrading, tilt and heatmap thresholds. All editable under Backup. */
+var INS_DEF={planStart:'06:45',planEnd:'12:55',planSize:2,perDay:1,
+  ovFactor:1.5,ovTradeCap:0,ovContractCap:0,ovMinDays:5,ovWindow:20,ovDefTrades:2,ovDefContracts:4,
+  tiltMin:3,tiltStreak:3,tiltDown:300,hmMin:5};
+var INS_TIME=['planStart','planEnd'],INS_MIN={planSize:1,perDay:1,ovFactor:1,ovTradeCap:0,ovContractCap:0,ovMinDays:1,ovWindow:1,ovDefTrades:1,ovDefContracts:1,tiltMin:0,tiltStreak:2,tiltDown:0,hmMin:1};
+function fixIns(x){x=x&&typeof x==='object'?x:{};var o={},k;
+  for(k in INS_DEF){var v=x[k];
+    if(INS_TIME.indexOf(k)>=0)o[k]=(typeof v==='string'&&/^([01]\d|2[0-3]):[0-5]\d$/.test(v))?v:INS_DEF[k];
+    else o[k]=(v!==undefined&&v!==null&&v!==''&&isFinite(+v)&&+v>=INS_MIN[k])?+v:INS_DEF[k];}
+  return o;}
 var SEED={version:1,trades:[],
   observations:[],
   settings:DEFAULT_SETTINGS};
@@ -404,7 +466,7 @@ function normalize(d){
   if(!d.checklist||!Array.isArray(d.checklist.items))d.checklist={items:defaultCheckItems(),days:(d.checklist&&d.checklist.days)||{}};d.checklist.days=d.checklist.days||{};
   var s=d.settings||{};var out={};for(var k in DEFAULT_SETTINGS)out[k]=(s[k]!==undefined?s[k]:JSON.parse(JSON.stringify(DEFAULT_SETTINGS[k])));
   for(var ik in DEFAULT_SETTINGS.instruments)if(!out.instruments[ik])out.instruments[ik]=JSON.parse(JSON.stringify(DEFAULT_SETTINGS.instruments[ik]));
-  out.accounts=migrateAccounts(s);
+  out.accounts=migrateAccounts(s);out.insights=fixIns(s.insights);
   d.settings=out;d.version=1;return d;
 }
 function persist(d){
@@ -549,14 +611,14 @@ function render(){
   cb.textContent=filt.preset==='custom'&&(filt.from||filt.to)?'📅 '+(filt.from?filt.from.slice(5).replace('-','/'):'…')+'–'+(filt.to?filt.to.slice(5).replace('-','/'):'…'):'📅 Custom';
   $('#customRow').classList.toggle('hide',!(customOpen||filt.preset==='custom'));
   var AL=acctList();$('#acctLabel').textContent=AL.length>1?'Topstep ×'+AL.length+' · copy trading':(AL[0]?AL[0].name:db.settings.account);
-  renderDash();renderTrades();renderCal();renderCheck();renderMore();
+  renderDash();renderTrades();renderCal();if(tab==='ins')renderIns();renderCheck();renderMore();
   if(dayOpen&&$('#daySheet').classList.contains('open'))renderDay();
 }
 
 function statBox(l,v,c){return '<div class="stat"><div class="l">'+l+'</div><div class="v '+(c||'')+'">'+v+'</div></div>';}
 function renderDash(){
   var ts=filteredTrades(),s=stats(ts),S=db.settings;
-  var h='';
+  var h=insBanners();
   var needs=db.trades.filter(function(t){return t.importKeys&&t.importKeys.length&&!t.followed;}).length;
   h+='<div class="impcard"><button type="button" class="btn pri" data-sync id="dashSync"'+(syncing?' disabled':'')+'>'+(syncing?'<span class="spin">⟳</span>&nbsp;Syncing…':'🔄 Sync TopstepX')+'</button><button type="button" class="btn sm" data-import id="dashImport">📥 CSV</button></div>'+
     '<div class="syncst" id="syncStatus">'+syncStatusText()+(needs?' <b style="color:var(--y)">'+needs+' imported trade'+(needs===1?'':'s')+' need your stop / rules check.</b>':'')+'</div>';
@@ -639,6 +701,7 @@ function renderMore(){
    '<div class="hint">JSON keeps screenshots; CSV doesn\'t (opens in Excel/Sheets). Import merges by ID — existing entries with the same ID are updated, nothing else is removed.</div>'+
    (db.observations.length?'<div class="hint">'+db.observations.length+' note'+(db.observations.length===1?'':'s')+' / no-trade day'+(db.observations.length===1?'':'s')+' saved — open them from the Calendar day view (older notes are kept in your backup).</div>':'')+'<div class="hint">Storage used: ~'+(used/1024).toFixed(0)+' KB of roughly 5,000 KB available.</div></div>';
   h+=acctSettingsHTML();
+  h+=insSettingsHTML();
   h+='<div class="card"><h2>Instrument settings</h2><form id="setForm">'+
    '<div class="f2"><div><label>MNQ $ per point</label><input name="mnqPv" inputmode="decimal" value="'+S.instruments.MNQ.pv+'"></div><div><label>MNQ fees per contract (round trip)</label><input name="mnqFee" inputmode="decimal" value="'+S.instruments.MNQ.fee+'"></div></div>'+
    '<div class="hint">Trades at/after 3:00 PM PT count toward the next trading day.</div>'+
@@ -1273,6 +1336,272 @@ function renderSyncSheet(){var S=lastSync,body=$('#syncBody');if(!S||!body)retur
   h+='<div class="small mut" style="margin:12px 4px 20px">Uses the same public data your TopstepX share link shows, fetched straight from this phone only when you tap Sync. It relies on TopstepX\'s undocumented share API, which could change.</div>';
   body.innerHTML=h;}
 
+
+/* ---------- Insights: rule-break cost, overtrading, session heatmap, tilt ----------
+   Everything is computed here from db.trades (one journal trade = one merged copy trade, so a copy-traded
+   position counts once). With an account selected, only trades on that account count and its own P&L is used.
+   Entry time, size, P&L and the order of trades are used, so it works before you tag anything. */
+var ins={sec:'rule',acct:'',hm:'net',hmCell:'',spark:'likely',lim:{likely:20,tilt:8,days:14}};
+function insCfg(){return db.settings.insights||fixIns({});}
+function insMedian(a){if(!a.length)return NaN;var b=a.slice().sort(function(x,y){return x-y;}),m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2;}
+function insNum(v){return (Math.round(v*10)/10).toString();}
+function insXMs(t,e){if(isFinite(t.exitTs))return t.exitTs;
+  if(t.exitTime&&t.date){var m=manualMs({date:t.date,time:t.exitTime});if(isFinite(m)){if(isFinite(e)&&m<e)m+=86400000;return m;}}return NaN;}
+/* one record per journal trade, in entry order */
+function insRecs(acct){var R=[];
+  db.trades.forEach(function(t){if(acct&&!appliesTo(t,acct))return;var d=tradingDay(t);if(!d)return;
+    var p=acct?pnlFor(t,acct):pnlOf(t),c=num(t.contracts),ms=isFinite(t.entryTs)?t.entryTs:manualMs(t),noT=!isFinite(ms);
+    if(noT)ms=manualMs({date:t.date,time:'00:00'});
+    R.push({t:t,id:t.id,day:d,date:t.date,time:t.time||'',ms:ms,xms:insXMs(t,noT?NaN:ms),noTime:noT,part:!acct&&Array.isArray(t.accounts)&&t.accounts.length>0&&t.accounts.length<acctList(true).length,pnl:isFinite(p)?p:0,hasPnl:isFinite(p),c:isFinite(c)?c:0,inst:t.instrument||''});});
+  R.sort(function(a,b){return a.ms-b.ms||sortT(a.t,b.t);});return R;}
+function insGroup(R){var by={};R.forEach(function(r){(by[r.day]||(by[r.day]=[])).push(r);});return {days:Object.keys(by).sort(),by:by};}
+function insSum(a,f){var s=0;a.forEach(function(x){s+=f(x);});return s;}
+function insTimeName(h){return ((h%12)||12)+(h<12?' AM':' PM');}
+var INS_DOW=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+/* ----- 1. rule-break cost ----- */
+function insClass(r){var su=String(r.t.setup||'').toLowerCase();
+  if(r.t.followed==='no'||/off[\s_-]?plan/.test(su))return 'off';if(r.t.followed==='yes')return 'on';return '';}
+function insAuto(r,rank,cfg){var w=[];
+  if(r.time&&(r.time<cfg.planStart||r.time>cfg.planEnd))w.push('window');
+  if(r.c>cfg.planSize)w.push('size');
+  if(rank>cfg.perDay)w.push('extra');return w;}
+var INS_WHY={window:'outside plan window',size:'bigger than plan size',extra:'extra trade of the day'};
+function insRule(R,cfg){var G=insGroup(R),rank={},o={n:R.length,off:{n:0,pnl:0},on:{n:0,pnl:0},likely:{n:0,pnl:0,window:0,size:0,extra:0},clean:{n:0,pnl:0},list:[],ser:[]},cC=0,cL=0;
+  G.days.forEach(function(d){G.by[d].forEach(function(r,i){rank[r.id]=i+1;});});
+  R.forEach(function(r){var c=insClass(r),p=r.pnl;
+    if(c==='off'){o.off.n++;o.off.pnl+=p;cC-=p;cL-=p;o.ser.push({d:r.day,c:cC,l:cL});}
+    else if(c==='on'){o.on.n++;o.on.pnl+=p;}
+    else{var why=insAuto(r,rank[r.id],cfg);
+      if(why.length){o.likely.n++;o.likely.pnl+=p;why.forEach(function(k){o.likely[k]++;});cL-=p;o.ser.push({d:r.day,c:cC,l:cL});o.list.push({r:r,why:why,rank:rank[r.id]});}
+      else{o.clean.n++;o.clean.pnl+=p;}}});
+  ['off','on','likely','clean'].forEach(function(k){o[k].pnl=r2(o[k].pnl);});
+  o.untagged=o.likely.n+o.clean.n;o.saved=r2(-o.off.pnl);o.savedLikely=r2(-(o.off.pnl+o.likely.pnl));
+  o.ser.forEach(function(x){x.c=r2(x.c);x.l=r2(x.l);});o.list.reverse();return o;}
+function insAvg(p,n){return n?p/n:NaN;}
+function insSavedLine(v,what){return v>0?'Skipping '+what+' would have kept <b class="pos">'+money(v,1)+'</b>.':v<0?'Skipping '+what+' would have cost <b class="neg">'+money(-v)+'</b> — they actually made money.':'Skipping '+what+' would have changed nothing.';}
+function insSpark(ser,key){if(ser.length<1)return '';var pts=[0].concat(ser.map(function(x){return x[key];})),W=340,H=110,pl=48,pr=8,pt=8,pb=16,mn=Math.min.apply(null,pts.concat(0)),mx=Math.max.apply(null,pts.concat(0));if(mn===mx){mn-=1;mx+=1;}
+  var x=function(i){return pl+(W-pl-pr)*i/Math.max(1,pts.length-1);},y=function(v){return pt+(H-pt-pb)*(mx-v)/(mx-mn);};
+  var d=pts.map(function(v,i){return (i?'L':'M')+x(i).toFixed(1)+','+y(v).toFixed(1);}).join(' '),last=pts[pts.length-1],col=last>=0?'#2ecc71':'#ff5c5c';
+  var sh=function(v){var a=Math.abs(v);return (v<0?'-':'')+'$'+(a>=1000?(a/1000).toFixed(1)+'k':a.toFixed(0));};
+  return '<svg id="insSpark" viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Running total if off-plan trades were skipped"><line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(0)+'" y2="'+y(0)+'" stroke="#444c56" stroke-dasharray="4 4"/>'+
+   '<text x="'+(pl-6)+'" y="'+(y(mx)+4)+'" text-anchor="end">'+sh(mx)+'</text><text x="'+(pl-6)+'" y="'+(y(mn)+4)+'" text-anchor="end">'+sh(mn)+'</text>'+
+   '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.5" stroke-linejoin="round"/><circle cx="'+x(pts.length-1)+'" cy="'+y(last)+'" r="3.5" fill="'+col+'"/>'+
+   '<text x="'+pl+'" y="'+(H-3)+'">start</text><text x="'+(W-pr)+'" y="'+(H-3)+'" text-anchor="end">'+(pts.length-1)+' off-plan trade'+(pts.length===2?'':'s')+'</text></svg>';}
+function insRuleHTML(R,cfg){var o=insRule(R,cfg),h='';
+  if(!o.n)return '<div class="card"><h2>Rule-break cost</h2><div class="empty">Not enough data yet — no trades in this view.</div></div>';
+  var tagged=o.off.n+o.on.n;
+  h+='<div class="card" id="ruleCard"><h2>Rule-break cost</h2><div class="insnote" style="margin-top:-4px">What the trades outside your plan did to your P&amp;L. Based on the "Followed my rules?" answer (or an "off-plan" setup) and three automatic checks: entry outside <b>'+fmtTime(cfg.planStart)+'–'+fmtTime(cfg.planEnd)+' PT</b>, size above <b>'+cfg.planSize+'</b>, and more than <b>'+cfg.perDay+'</b> trade'+(cfg.perDay===1?'':'s')+' in a trading day. Change them under Backup › Insights settings.</div>';
+  h+='<table class="instbl" id="ruleTbl"><tr><th></th><th>Trades</th><th>Net P&amp;L</th><th>Avg</th></tr>'+
+    '<tr data-k="off"><td>Off-plan <small>you tagged: rules = No / off-plan setup</small></td><td>'+o.off.n+'</td><td class="'+cls(o.off.pnl)+'">'+(o.off.n?money(o.off.pnl,1):'–')+'</td><td class="'+cls(o.off.pnl)+'">'+(o.off.n?money(insAvg(o.off.pnl,o.off.n),1):'–')+'</td></tr>'+
+    '<tr data-k="likely"><td>Likely off-plan <small>untagged, flagged by the auto checks</small></td><td>'+o.likely.n+'</td><td class="'+cls(o.likely.pnl)+'">'+(o.likely.n?money(o.likely.pnl,1):'–')+'</td><td class="'+cls(o.likely.pnl)+'">'+(o.likely.n?money(insAvg(o.likely.pnl,o.likely.n),1):'–')+'</td></tr>'+
+    '<tr data-k="on"><td>On-plan <small>you tagged: rules = Yes</small></td><td>'+o.on.n+'</td><td class="'+cls(o.on.pnl)+'">'+(o.on.n?money(o.on.pnl,1):'–')+'</td><td class="'+cls(o.on.pnl)+'">'+(o.on.n?money(insAvg(o.on.pnl,o.on.n),1):'–')+'</td></tr>'+
+    '<tr data-k="clean"><td>Untagged, no flags <small>look on-plan, not confirmed</small></td><td>'+o.clean.n+'</td><td class="'+cls(o.clean.pnl)+'">'+(o.clean.n?money(o.clean.pnl,1):'–')+'</td><td class="'+cls(o.clean.pnl)+'">'+(o.clean.n?money(insAvg(o.clean.pnl,o.clean.n),1):'–')+'</td></tr></table>';
+  h+='<div class="insnote" id="ruleUntag"><b style="color:var(--text)">'+o.untagged+' of '+o.n+'</b> trade'+(o.n===1?' has':'s have')+' no rules tag ('+Math.round(o.untagged/o.n*100)+'%). '+(tagged?'Only '+tagged+' '+(tagged===1?'is':'are')+' tagged, so treat the tagged rows as a small sample.':'Nothing is tagged yet, so the likely off-plan numbers are automatic guesses, not your own answers.')+'</div></div>';
+  h+='<div class="card" id="ruleSaved"><h2>If you had skipped off-plan trades</h2>'+
+    '<div class="grid"><div class="stat"><div class="l">Tagged off-plan only</div><div class="insbig '+cls(o.saved)+'" id="savedConfirmed">'+(o.off.n?money(o.saved,1):'–')+'</div><div class="small mut">'+(o.off.n?'= −(P&amp;L of '+o.off.n+' tagged trade'+(o.off.n===1?'':'s')+')':'none tagged yet')+'</div></div>'+
+    '<div class="stat"><div class="l">+ likely off-plan</div><div class="insbig '+cls(o.savedLikely)+'" id="savedLikely">'+((o.off.n+o.likely.n)?money(o.savedLikely,1):'–')+'</div><div class="small mut">'+((o.off.n+o.likely.n)?'incl. '+o.likely.n+' auto-flagged (a guess)':'nothing flagged')+'</div></div></div>'+
+    '<div class="insnote" style="margin-top:10px">'+(o.off.n?insSavedLine(o.saved,'the '+o.off.n+' trade'+(o.off.n===1?'':'s')+' you tagged off-plan'):'Tag trades with "Followed my rules? = No" to see their confirmed cost.')+((o.likely.n)?' '+insSavedLine(o.savedLikely,'all '+(o.off.n+o.likely.n)+' off-plan and likely off-plan trades')+' This is hindsight arithmetic: it assumes you would simply have skipped those trades and nothing else would have changed.':'')+'</div>';
+  if(o.ser.length){h+='<div class="hmseg" style="grid-template-columns:1fr 1fr;margin-top:10px"><button type="button" data-insspark="likely" class="'+(ins.spark==='likely'?'on':'')+'">Tagged + likely</button><button type="button" data-insspark="conf" class="'+(ins.spark==='conf'?'on':'')+'">Tagged only</button></div>'+
+    '<div class="small mut" style="margin:0 0 2px">Running total of what skipping them would have saved (−P&amp;L)</div>'+insSpark(o.ser,ins.spark==='conf'?'c':'l');}
+  h+='</div>';
+  h+='<div class="card" id="likelyCard"><h2>Likely off-plan trades</h2>';
+  if(!o.list.length)h+='<div class="empty" style="padding:14px">No untagged trades are flagged by the automatic checks.</div>';
+  else{h+='<div class="insnote" style="margin-top:-4px">Newest first. Tap a button to set "Followed my rules?" on that trade. Nothing is changed until you tap.</div>';
+    o.list.slice(0,ins.lim.likely).forEach(function(x){var r=x.r,t=r.t;
+      h+='<div class="insrow" data-likely="'+esc(t.id)+'"><div class="row"><span><span class="badge '+t.direction+'">'+(t.direction==='short'?'SHORT':'LONG')+'</span> <b>'+esc(t.contracts)+' '+esc(t.instrument)+'</b> <span class="mut small">'+shortDate(r.date)+(r.time?' · '+fmtTime(r.time):'')+'</span></span><b class="'+cls(r.pnl)+'">'+money(r.pnl,1)+'</b></div>'+
+        '<div>'+x.why.map(function(k){return '<span class="inschip w">'+INS_WHY[k]+(k==='extra'?' (#'+x.rank+')':k==='size'?' ('+r.c+' vs '+cfg.planSize+')':'')+'</span>';}).join('')+'</div>'+
+        '<div class="insbtns"><button type="button" class="off" data-insmark="'+esc(t.id)+':off">Mark off-plan</button><button type="button" class="on" data-insmark="'+esc(t.id)+':on">Mark on-plan</button></div></div>';});
+    if(o.list.length>ins.lim.likely)h+='<button type="button" class="insmore" data-insmore="likely">Show more ('+(o.list.length-ins.lim.likely)+' left)</button>';}
+  return h+'</div>';}
+
+/* ----- 2. overtrading ----- */
+function insOver(R,cfg){var G=insGroup(R),days=[],cnt=[],con=[];
+  G.days.forEach(function(d,i){var rs=G.by[d],n=rs.length,c=insSum(rs,function(r){return r.c;}),p=r2(insSum(rs,function(r){return r.pnl;}));
+    var lo=Math.max(0,i-cfg.ovWindow),pn=cnt.slice(lo,i),pc=con.slice(lo,i),hist=pn.length>=cfg.ovMinDays;
+    var bN=hist?insMedian(pn):cfg.ovDefTrades,bC=hist?insMedian(pc):cfg.ovDefContracts;
+    var fN=n>bN*cfg.ovFactor,fC=c>bC*cfg.ovFactor,kN=cfg.ovTradeCap>0&&n>=cfg.ovTradeCap,kC=cfg.ovContractCap>0&&c>=cfg.ovContractCap;
+    days.push({day:d,mixed:rs.filter(function(r){return r.part;}).length,n:n,c:c,pnl:p,baseN:bN,baseC:bC,hist:hist,prior:pn.length,limN:bN*cfg.ovFactor,limC:bC*cfg.ovFactor,fN:fN,fC:fC,kN:kN,kC:kC,flagged:fN||fC||kN||kC});
+    cnt.push(n);con.push(c);});
+  var fl=days.filter(function(x){return x.flagged;}),nm=days.filter(function(x){return !x.flagged;});
+  function agg(a){var t=r2(insSum(a,function(x){return x.pnl;}));return {days:a.length,pnl:t,avg:a.length?t/a.length:NaN,green:a.filter(function(x){return x.pnl>0;}).length,n:insSum(a,function(x){return x.n;})};}
+  return {days:days,flagged:fl,normal:nm,fl:agg(fl),nm:agg(nm)};}
+function insOverText(x){var p=[],td=x.day===curDay()?' today':'';
+  if(x.fN||x.kN)p.push(x.n+' trades'+td+' vs your typical '+insNum(x.baseN));
+  if(x.fC||x.kC)p.push(x.c+' contracts'+td+' vs your typical '+insNum(x.baseC));return p.join(' · ');}
+function insOverWhy(x,cfg){var w=[];if(x.fN)w.push('trades above '+cfg.ovFactor+'× typical');if(x.fC)w.push('contracts above '+cfg.ovFactor+'× typical');if(x.kN)w.push('hit the '+cfg.ovTradeCap+'-trade cap');if(x.kC)w.push('hit the '+cfg.ovContractCap+'-contract cap');return w;}
+function insOverHTML(R,cfg){var O=insOver(R,cfg),h='',today=curDay(),td=O.days.filter(function(x){return x.day===today;})[0];
+  if(!O.days.length)return '<div class="card"><h2>Overtrading alerts</h2><div class="empty">Not enough data yet — no trades in this view.</div></div>';
+  h+='<div class="card" id="overToday"><h2>Today · '+shortDate(today)+'</h2>';
+  if(td){var b=td.hist?'your typical (median of the last '+Math.min(cfg.ovWindow,td.prior)+' days)':'the plan default (only '+td.prior+' earlier day'+(td.prior===1?'':'s')+' of history; needs '+cfg.ovMinDays+')';
+    h+='<div class="grid"><div class="stat"><div class="l">Trades today</div><div class="v '+((td.fN||td.kN)?'neg':'')+'" id="todayN">'+td.n+'</div><div class="small mut">typical '+insNum(td.baseN)+' · flags above '+insNum(td.limN)+'</div></div>'+
+      '<div class="stat"><div class="l">Contracts today</div><div class="v '+((td.fC||td.kC)?'neg':'')+'" id="todayC">'+td.c+'</div><div class="small mut">typical '+insNum(td.baseC)+' · flags above '+insNum(td.limC)+'</div></div></div>'+
+      '<div class="insnote">Compared with '+b+'. '+(td.flagged?'<b style="color:var(--y)">Flagged: '+insOverWhy(td,cfg).join(', ')+'.</b> Worth a breath and a look at the plan.':'Within your usual range so far.')+'</div>';}
+  else h+='<div class="empty" style="padding:14px">No trades yet today.</div>';
+  h+='</div>';
+  h+='<div class="card" id="overCmp"><h2>Flagged days vs normal days</h2>';
+  if(!O.fl.days||!O.nm.days)h+='<div class="empty" style="padding:14px">Not enough data yet — need at least one flagged and one normal day to compare ('+O.fl.days+' flagged, '+O.nm.days+' normal so far).</div>';
+  else h+='<table class="instbl"><tr><th></th><th>Days</th><th>Trades</th><th>Net</th><th>Avg/day</th></tr>'+
+    '<tr data-k="flagged"><td>Flagged</td><td>'+O.fl.days+'</td><td>'+O.fl.n+'</td><td class="'+cls(O.fl.pnl)+'">'+money(O.fl.pnl,1)+'</td><td class="'+cls(O.fl.avg)+'">'+money(O.fl.avg,1)+'</td></tr>'+
+    '<tr data-k="normal"><td>Normal</td><td>'+O.nm.days+'</td><td>'+O.nm.n+'</td><td class="'+cls(O.nm.pnl)+'">'+money(O.nm.pnl,1)+'</td><td class="'+cls(O.nm.avg)+'">'+money(O.nm.avg,1)+'</td></tr></table>'+
+    '<div class="insnote">Green days: '+O.fl.green+' of '+O.fl.days+' flagged, '+O.nm.green+' of '+O.nm.days+' normal.'+((O.fl.days<5||O.nm.days<5)?' <b style="color:var(--y)">Small sample ('+Math.min(O.fl.days,O.nm.days)+' day'+(Math.min(O.fl.days,O.nm.days)===1?'':'s')+' in the smaller group) — a pattern to watch, not a conclusion.</b>':'')+'</div>';
+  h+='</div>';
+  var recent=O.days.slice().reverse(),mx=Math.max.apply(null,O.days.map(function(x){return x.n;}).concat(1));
+  h+='<div class="card" id="overDays"><h2>Recent days</h2><div class="insnote" style="margin-top:-4px">Each copy trade counts once. Typical = median of up to the last '+cfg.ovWindow+' trading days; with fewer than '+cfg.ovMinDays+' earlier days the plan defaults ('+cfg.ovDefTrades+' trades, '+cfg.ovDefContracts+' contracts) are used.'+(cfg.ovTradeCap||cfg.ovContractCap?' Hard caps: '+(cfg.ovTradeCap?cfg.ovTradeCap+' trades':'')+(cfg.ovTradeCap&&cfg.ovContractCap?', ':'')+(cfg.ovContractCap?cfg.ovContractCap+' contracts':'')+'.':'')+'</div>';
+  recent.slice(0,ins.lim.days).forEach(function(x){
+    h+='<div class="insrow insbars" data-day-row="'+x.day+'"><div class="row"><span><b>'+shortDate(x.day)+'</b> '+(x.flagged?'<span class="inschip w">flagged</span>':'')+(x.hist?'':'<span class="inschip">default baseline</span>')+(x.mixed?'<span class="inschip">mixed accounts</span>':'')+'</span><b class="'+cls(x.pnl)+'">'+money(x.pnl,1)+'</b></div>'+
+      '<div class="small mut">'+x.n+' trade'+(x.n===1?'':'s')+' (typical '+insNum(x.baseN)+') · '+x.c+' contracts (typical '+insNum(x.baseC)+')'+(x.flagged?' · '+insOverWhy(x,cfg).join(', '):'')+'</div><i class="'+(x.flagged?'hot':'')+'" style="width:'+Math.max(2,x.n/mx*100)+'%"></i></div>';});
+  if(recent.length>ins.lim.days)h+='<button type="button" class="insmore" data-insmore="days">Show more ('+(recent.length-ins.lim.days)+' earlier days)</button>';
+  return h+'</div>';}
+function insTodayOver(){var cfg=insCfg(),R=insRecs(''),cur=curDay();if(!R.length)return null;var O=insOver(R,cfg);return O.days.filter(function(x){return x.day===cur;})[0]||null;}
+
+/* ----- 3. session heatmap (entry-time basis) ----- */
+function insHeat(R,cfg){var cells={},hours={},o={cells:cells,hours:hours,n:0,noTime:0,wds:{}};
+  R.forEach(function(r){if(r.noTime||!/^\d\d:/.test(r.time)){o.noTime++;return;}var h=+r.time.slice(0,2),w=dow(r.date),k=h+'_'+w;
+    function add(M,key,extra){var c=M[key]||(M[key]=extra);c.n++;c.net+=r.pnl;if(r.pnl>0)c.wn++;else if(r.pnl<0)c.ls++;if(!c.best||r.pnl>c.best.pnl)c.best=r;if(!c.worst||r.pnl<c.worst.pnl)c.worst=r;}
+    add(cells,k,{h:h,wd:w,n:0,net:0,wn:0,ls:0});add(hours,h,{h:h,n:0,net:0,wn:0,ls:0});o.n++;o.wds[w]=1;});
+  function fin(c){c.net=r2(c.net);c.avg=c.n?c.net/c.n:NaN;c.wr=c.n?c.wn/c.n*100:NaN;}
+  Object.keys(cells).forEach(function(k){fin(cells[k]);});Object.keys(hours).forEach(function(k){fin(hours[k]);});
+  var key=ins.hm==='avg'?'avg':ins.hm==='wr'?'wr':'net';
+  function pick(M){var L=Object.keys(M).map(function(k){return M[k];}).filter(function(c){return c.n>=cfg.hmMin;}),b=null,w=null;
+    L.forEach(function(c){if(!b||c[key]>b[key])b=c;if(!w||c[key]<w[key])w=c;});return {best:b,worst:(w&&w!==b)?w:null,count:L.length};}
+  o.pickCell=pick(cells);o.pickHour=pick(hours);o.key=key;return o;}
+function insHeatCell(c,m){return m==='net'?abbr(c.net):m==='avg'?abbr(c.avg):m==='wr'?Math.round(c.wr)+'%':String(c.n);}
+function insHeatCol(c,m,mx){var a;
+  if(m==='cnt'){a=0.12+0.7*c.n/mx.n;return 'rgba(77,163,255,'+a.toFixed(2)+')';}
+  var v=m==='net'?c.net:m==='avg'?c.avg:c.wr-50,d=m==='net'?mx.net:m==='avg'?mx.avg:50;if(!d)return '';a=0.14+0.66*Math.min(1,Math.abs(v)/d);
+  return v>0?'rgba(46,204,113,'+a.toFixed(2)+')':v<0?'rgba(255,92,92,'+a.toFixed(2)+')':'';}
+function insWinTxt(c){return INS_DOW[c.wd]+' '+insTimeName(c.h)+' entries';}
+function insHeatHTML(R,cfg){var o=insHeat(R,cfg),m=ins.hm,h='';
+  if(!R.length||!o.n)return '<div class="card"><h2>Session heatmap</h2><div class="empty">Not enough data yet — no trades with an entry time in this view.</div></div>';
+  var wds=[1,2,3,4,5];if(o.wds[0])wds.unshift(0);if(o.wds[6])wds.push(6);
+  var hrs=Object.keys(o.hours).map(Number).sort(function(a,b){return a-b;}),mx={n:1,net:1,avg:1};
+  Object.keys(o.cells).forEach(function(k){var c=o.cells[k];mx.n=Math.max(mx.n,c.n);mx.net=Math.max(mx.net,Math.abs(c.net));mx.avg=Math.max(mx.avg,Math.abs(c.avg));});
+  h+='<div class="card" id="hmCard"><h2>Session heatmap</h2><div class="hmseg" id="hmMetric">'+[['net','Net P&L'],['avg','Avg / trade'],['wr','Win rate'],['cnt','Trades']].map(function(x){return '<button type="button" data-hm="'+x[0]+'" class="'+(m===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>';
+  h+='<div class="hm" id="hmGrid" style="grid-template-columns:42px repeat('+wds.length+',minmax(0,1fr))"><div></div>'+wds.map(function(w){return '<div class="hh">'+INS_DOW[w]+'</div>';}).join('');
+  hrs.forEach(function(hr){h+='<div class="hl">'+insTimeName(hr)+'</div>';
+    wds.forEach(function(w){var c=o.cells[hr+'_'+w],id=hr+'_'+w;
+      if(!c){h+='<button type="button" class="hc empty" disabled aria-label="'+INS_DOW[w]+' '+insTimeName(hr)+': no trades"></button>';return;}
+      var lo=c.n<cfg.hmMin,bg=insHeatCol(c,m,mx);
+      h+='<button type="button" class="hc'+(lo?' lo':'')+(ins.hmCell===id?' sel':'')+'" data-hmcell="'+id+'" style="'+(bg?'background:'+bg:'')+'" aria-label="'+INS_DOW[w]+' '+insTimeName(hr)+': '+money(c.net,1)+', '+c.n+' trade'+(c.n===1?'':'s')+'"><b>'+insHeatCell(c,m)+'</b>'+(m==='cnt'?'':'<small>'+c.n+' tr</small>')+'</button>';});});
+  h+='</div><div class="insnote">Rows = hour of the <b>entry time</b> (PT). Columns = the <b>calendar weekday of the entry</b>, so a Sunday-evening entry is in the Sun column even though Topstep counts it toward Monday. Hours with no trades are hidden. Dashed cells have fewer than <b>'+cfg.hmMin+'</b> trades — too few to trust. '+'With "All accounts", each copy trade counts once with one account\'s P&amp;L.'+(o.noTime?' '+o.noTime+' trade'+(o.noTime===1?' has':'s have')+' no entry time and '+(o.noTime===1?'is':'are')+' left out.':'')+'</div>';
+  var sel=ins.hmCell&&o.cells[ins.hmCell];
+  h+='<div id="hmDetail" style="margin-top:6px">';
+  if(sel){h+='<div class="stat" style="margin-top:6px"><div class="row"><b>'+INS_DOW[sel.wd]+' '+insTimeName(sel.h)+'–'+insTimeName((sel.h+1)%24)+'</b><span class="small mut">entries, PT</span></div>'+
+    '<div class="grid" style="margin-top:8px"><div><div class="small mut">Trades</div><b id="hdN">'+sel.n+'</b></div><div><div class="small mut">Net P&amp;L</div><b id="hdNet" class="'+cls(sel.net)+'">'+money(sel.net,1)+'</b></div>'+
+    '<div><div class="small mut">Avg per trade</div><b id="hdAvg" class="'+cls(sel.avg)+'">'+money(sel.avg,1)+'</b></div><div><div class="small mut">Win rate</div><b id="hdWr">'+Math.round(sel.wr)+'% <span class="mut small">('+sel.wn+'W / '+sel.ls+'L)</span></b></div></div>'+
+    '<div class="small mut" style="margin-top:8px">Best trade '+money(sel.best.pnl,1)+' · worst '+money(sel.worst.pnl,1)+'</div>'+(sel.n<cfg.hmMin?'<div class="small" style="color:var(--y);margin-top:6px">Only '+sel.n+' trade'+(sel.n===1?'':'s')+' here — too few to read anything into.</div>':'')+'</div>';}
+  else h+='<div class="small mut" style="margin-top:6px">Tap a cell for its trade count, average and win rate.</div>';
+  h+='</div></div>';
+  var keyName=o.key==='avg'?'avg per trade':o.key==='wr'?'win rate':'net P&L';
+  function line(c,k){return '<b>'+insWinTxt(c)+'</b> · '+money(c.net,1)+' net · '+c.n+' trades · avg '+money(c.avg,1)+' · '+Math.round(c.wr)+'% wins';}
+  h+='<div class="card" id="hmCalls"><h2>Best &amp; worst windows</h2><div class="insnote" style="margin-top:-4px">Ranked by '+keyName+', only windows with at least '+cfg.hmMin+' trades.</div>';
+  var pc=o.pickCell,ph=o.pickHour;
+  if(pc.best){h+='<div class="insrow" id="hmBest"><span class="inschip g">Best window</span><div class="small" style="margin-top:4px">'+line(pc.best)+'</div></div>';
+    h+=pc.worst?'<div class="insrow" id="hmWorst"><span class="inschip r">Worst window</span><div class="small" style="margin-top:4px">'+line(pc.worst)+'</div></div>':'<div class="small mut">Only one window has enough trades, so there is no separate worst window yet.</div>';}
+  else h+='<div class="empty" id="hmNone" style="padding:14px">Not enough data yet — no weekday-and-hour window has '+cfg.hmMin+'+ trades.</div>';
+  if(ph.best){h+='<div class="insrow" id="hmHourBest"><span class="inschip g">Best hour (all weekdays)</span><div class="small" style="margin-top:4px"><b>'+insTimeName(ph.best.h)+' entries</b> · '+money(ph.best.net,1)+' net · '+ph.best.n+' trades · avg '+money(ph.best.avg,1)+'</div></div>';
+    if(ph.worst)h+='<div class="insrow" id="hmHourWorst"><span class="inschip r">Worst hour (all weekdays)</span><div class="small" style="margin-top:4px"><b>'+insTimeName(ph.worst.h)+' entries</b> · '+money(ph.worst.net,1)+' net · '+ph.worst.n+' trades · avg '+money(ph.worst.avg,1)+'</div></div>';}
+  h+='<div class="insnote">Small samples swing a lot: a few trades can make a window look great or awful by luck. Treat these as places to look, and let the sample grow before changing anything.</div></div>';
+  return h;}
+
+/* ----- 4. tilt detector ----- */
+var INS_TILT={fast:'quick re-entry after a loss',size:'size up after a loss',streak:'loss streak',down:'trading while down on the day'};
+function insTilt(R,cfg){var G=insGroup(R),days=[],A={days:0,flagDays:0,bN:0,bP:0,aN:0,aP:0,cleanN:0,cleanP:0};
+  G.days.forEach(function(d){var rs=G.by[d],N=rs.length,fl=[],spans=[],run=0,after=[],i,j;
+    for(i=0;i<N;i++){var r=rs[i],p=i?rs[i-1]:null,f={fast:0,size:0,streak:0,down:0},pclosed=p&&(!isFinite(p.xms)||p.xms<=r.ms);
+      var cl=0;for(j=0;j<i;j++)if(!isFinite(rs[j].xms)||rs[j].xms<=r.ms)cl+=rs[j].pnl;
+      if(cl<-cfg.tiltDown){f.down=1;spans.push([i,i]);after.push(i);}
+      if(p&&p.hasPnl&&p.pnl<0&&pclosed){
+        if(isFinite(p.xms)&&!p.noTime&&!r.noTime){var gap=(r.ms-p.xms)/60000;if(gap>=0&&gap<=cfg.tiltMin){f.fast=1;spans.push([i-1,i]);after.push(i);}}
+        if(r.c>p.c){f.size=1;spans.push([i-1,i]);after.push(i);}}
+      if(r.hasPnl&&r.pnl<0)run++;else run=0;
+      if(run>=cfg.tiltStreak){f.streak=1;spans.push([i-run+1,i]);if(run===cfg.tiltStreak)after.push(i+1);}
+      f.run=run;fl.push(f);}
+    spans.sort(function(a,b){return a[0]-b[0]||a[1]-b[1];});var eps=[];
+    spans.forEach(function(sp){var L=eps[eps.length-1];if(L&&sp[0]<=L.hi+1)L.hi=Math.max(L.hi,sp[1]);else eps.push({lo:sp[0],hi:sp[1]});});
+    eps.forEach(function(e){e.trades=rs.slice(e.lo,e.hi+1);e.fl=fl.slice(e.lo,e.hi+1);e.net=r2(insSum(e.trades,function(r){return r.pnl;}));e.day=d;e.ms=rs[e.lo].ms;
+      e.cnt={fast:0,size:0,streak:0,down:0};var mr=0;e.fl.forEach(function(f){['fast','size','down'].forEach(function(k){e.cnt[k]+=f[k];});if(f.streak)mr=Math.max(mr,f.run);});
+      var runs=0;e.fl.forEach(function(f){if(f.streak&&f.run===cfg.tiltStreak)runs++;});e.cnt.streak=runs;e.maxRun=mr;});
+    var flagged=0,cnt={fast:0,size:0,streak:0,down:0};fl.forEach(function(f){if(f.fast||f.size||f.streak||f.down)flagged++;cnt.fast+=f.fast;cnt.size+=f.size;cnt.down+=f.down;if(f.streak&&f.run===cfg.tiltStreak)cnt.streak++;});
+    var as=after.length?Math.min.apply(null,after):null,pnl=r2(insSum(rs,function(r){return r.pnl;}));
+    var bef=as==null?null:{n:as,pnl:r2(insSum(rs.slice(0,as),function(r){return r.pnl;}))},aft=as==null?null:{n:N-as,pnl:r2(insSum(rs.slice(as),function(r){return r.pnl;}))};
+    A.days++;if(as!=null){A.flagDays++;A.bN+=bef.n;A.bP+=bef.pnl;A.aN+=aft.n;A.aP+=aft.pnl;}else{A.cleanN+=N;A.cleanP+=pnl;}
+    /* active right now: the last trade is inside an episode, or the day is currently down more than the limit */
+    var act=null,lastE=eps.length?eps[eps.length-1]:null,tot=pnl,why=[];
+    if(lastE&&lastE.hi===N-1){if(lastE.maxRun>=cfg.tiltStreak)why.push({k:'streak',t:lastE.maxRun+' losses in a row'});if(lastE.cnt.size)why.push({k:'size',t:'size up after a loss'});if(lastE.cnt.fast)why.push({k:'fast',t:'quick re-entry after a loss'});}
+    if(N&&tot<-cfg.tiltDown){why.push({k:'down',t:'down '+money(-tot).replace('.00','')+' on the day'});}
+    days.push({day:d,mixed:rs.filter(function(r){return r.part;}).length,n:N,pnl:pnl,eps:eps,flagged:flagged,cnt:cnt,as:as,bef:bef,aft:aft,rs:rs,fl:fl,why:why});});
+  A.bP=r2(A.bP);A.aP=r2(A.aP);A.cleanP=r2(A.cleanP);return {days:days,sum:A};}
+function insTiltTodayDay(){var cfg=insCfg(),R=insRecs(''),cur=curDay();if(!R.length)return null;var T=insTilt(R,cfg);return T.days.filter(function(x){return x.day===cur;})[0]||null;}
+var INS_CALM=['Take a breath — a short pause and a look at the plan costs nothing.','No judgment here; this is just a pattern worth noticing. A few minutes away from the screen can reset things.','It happens to every trader. Check the plan, then decide whether the next trade fits it.'];
+function insTiltHTML(R,cfg){var T=insTilt(R,cfg),h='',S=T.sum,today=curDay();
+  if(!T.days.length)return '<div class="card"><h2>Tilt detector</h2><div class="empty">Not enough data yet — no trades in this view.</div></div>';
+  var td=T.days.filter(function(x){return x.day===today;})[0];
+  h+='<div class="card" id="tiltToday"><h2>Today · '+shortDate(today)+'</h2>';
+  if(td&&td.why.length)h+='<div class="insnote" style="color:var(--text);font-size:14px;margin-top:-2px"><b style="color:var(--b)">Tilt warning:</b> '+esc(td.why.map(function(x){return x.t;}).join(', '))+'.<br><span style="color:var(--mut)">'+INS_CALM[0]+'</span></div>';
+  else if(td)h+='<div class="insnote" style="margin-top:-2px">'+td.n+' trade'+(td.n===1?'':'s')+' today and no tilt signals active right now.</div>';
+  else h+='<div class="empty" style="padding:14px">No trades yet today.</div>';
+  h+='</div>';
+  h+='<div class="card" id="tiltSum"><h2>P&amp;L after a flag vs before</h2>';
+  if(!S.flagDays)h+='<div class="empty" style="padding:14px">No tilt signals so far — nothing to compare. Not enough data yet.</div>';
+  else{var bA=S.bN?S.bP/S.bN:NaN,aA=S.aN?S.aP/S.aN:NaN,cA=S.cleanN?S.cleanP/S.cleanN:NaN;
+    h+='<table class="instbl"><tr><th></th><th>Trades</th><th>Net</th><th>Avg/trade</th></tr>'+
+      '<tr data-k="before"><td>Before the first flag <small>on '+S.flagDays+' flagged day'+(S.flagDays===1?'':'s')+'</small></td><td>'+S.bN+'</td><td class="'+cls(S.bP)+'">'+money(S.bP,1)+'</td><td class="'+cls(bA)+'">'+(S.bN?money(bA,1):'–')+'</td></tr>'+
+      '<tr data-k="after"><td>From the flag on <small>same days</small></td><td>'+S.aN+'</td><td class="'+cls(S.aP)+'">'+money(S.aP,1)+'</td><td class="'+cls(aA)+'">'+(S.aN?money(aA,1):'–')+'</td></tr>'+
+      '<tr data-k="clean"><td>Days with no flag</td><td>'+S.cleanN+'</td><td class="'+cls(S.cleanP)+'">'+(S.cleanN?money(S.cleanP,1):'–')+'</td><td class="'+cls(cA)+'">'+(S.cleanN?money(cA,1):'–')+'</td></tr></table>'+
+      '<div class="insnote">'+(S.flagDays<5?'<b style="color:var(--y)">Only '+S.flagDays+' flagged day'+(S.flagDays===1?'':'s')+' — small sample, read it loosely.</b> ':'')+'"From the flag on" starts at the trade where the first signal fired (for a loss streak, the trade after the streak is reached).</div>';}
+  h+='</div>';
+  var recent=T.days.slice().reverse();var hd='';
+  hd+='<div class="card" id="tiltDays"><h2>Recent days</h2>';
+  recent.slice(0,ins.lim.days).forEach(function(x){hd+='<div class="insrow" data-tilt-day="'+x.day+'"><div class="row"><span><b>'+shortDate(x.day)+'</b> <span class="mut small">'+x.n+' trade'+(x.n===1?'':'s')+'</span></span><span><span class="small mut">tilt score</span> <b class="'+(x.flagged?'neg':'pos')+'" data-k="score">'+x.flagged+'</b></span></div>'+
+    '<div>'+(x.flagged?['fast','size','streak','down'].filter(function(k){return x.cnt[k];}).map(function(k){return '<span class="inschip w">'+x.cnt[k]+'× '+INS_TILT[k]+'</span>';}).join('')+'<span class="inschip">'+x.eps.length+' episode'+(x.eps.length===1?'':'s')+'</span>':'<span class="inschip g">calm</span>')+'<span class="inschip '+(x.pnl>=0?'g':'r')+'">'+money(x.pnl,1)+'</span>'+(x.mixed?'<span class="inschip">mixed accounts</span>':'')+'</div></div>';});
+  if(recent.length>ins.lim.days)hd+='<button type="button" class="insmore" data-insmore="days">Show more ('+(recent.length-ins.lim.days)+' earlier days)</button>';
+  hd+='<div class="insnote">Tilt score = trades that tripped at least one signal that day.</div></div>';
+  var eps=[];T.days.forEach(function(x){x.eps.forEach(function(e){eps.push(e);});});eps.sort(function(a,b){return b.ms-a.ms;});
+  h+='<div class="card" id="tiltFeed"><h2>Flagged episodes</h2>';
+  if(!eps.length)h+='<div class="empty" style="padding:14px">No flagged episodes. Nice and steady.</div>';
+  else{eps.slice(0,ins.lim.tilt).forEach(function(e,ix){var ty=['fast','size','streak','down'].filter(function(k){return e.cnt[k];});
+    h+='<div class="insrow" data-ep="'+e.day+'#'+e.lo+'"><div class="row"><span><b>'+shortDate(e.day)+'</b> <span class="mut small">'+fmtTime(e.trades[0].time)+' · '+e.trades.length+' trades</span></span><b class="'+cls(e.net)+'">'+money(e.net,1)+'</b></div>'+
+      '<div>'+ty.map(function(k){return '<span class="inschip w">'+(k==='streak'?e.maxRun+' losses in a row':k==='down'?INS_TILT.down:INS_TILT[k])+'</span>';}).join('')+'</div>'+
+      '<div class="small" style="margin-top:6px">'+e.trades.map(function(r,i){var f=e.fl[i],mk=(f.fast||f.size||f.streak||f.down)?' <span class="mut">⚑</span>':'';return '<div class="row" style="padding:2px 0"><span class="mut">'+(r.time?fmtTime(r.time):'–')+' · '+r.c+' '+esc(r.inst)+mk+'</span><span class="'+cls(r.pnl)+'">'+money(r.pnl,1)+'</span></div>';}).join('')+'</div>'+
+      '<div class="small mut" style="margin-top:6px">'+INS_CALM[ix%INS_CALM.length]+'</div></div>';});
+    if(eps.length>ins.lim.tilt)h+='<button type="button" class="insmore" data-insmore="tilt">Show more ('+(eps.length-ins.lim.tilt)+' earlier episodes)</button>';}
+  return h+'</div>'+hd+'<details class="card" id="tiltRules"><summary style="font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;font-size:15px">What it looks for</summary><div class="small mut" style="line-height:1.5;margin-top:8px">Within one trading day, in order of entry: <b>(a)</b> a new trade within <b>'+cfg.tiltMin+' min</b> of a losing exit, <b>(b)</b> more contracts than the previous trade after a loss, <b>(c)</b> <b>'+cfg.tiltStreak+'+</b> losses in a row, <b>(d)</b> a new trade while the day is already down more than <b>'+money(cfg.tiltDown).replace('.00','')+'</b> (closed trades). Nearby signals are grouped into one <i>episode</i>. These are prompts to pause, not verdicts. Edit the thresholds under Backup › Insights settings.</div></details>';}
+
+/* ----- tab shell, dashboard banners, settings ----- */
+function renderIns(){var cfg=insCfg();if(ins.acct&&!acctById(ins.acct))ins.acct='';
+  var R=insRecs(ins.acct),AL=acctList(),h='<div class="insnav" id="insNav">'+[['rule','Rule-break cost'],['over','Over-trading'],['heat','Heatmap'],['tilt','Tilt']].map(function(x){return '<button type="button" data-insec="'+x[0]+'" class="'+(ins.sec===x[0]?'on':'')+'">'+x[1]+'</button>';}).join('')+'</div>';
+  h+='<div class="insbar"><span class="small mut" id="insCount">'+R.length+' trade'+(R.length===1?'':'s')+' · each copy trade once</span>'+
+    (AL.length>1?'<select id="insAcct" class="calsel" aria-label="Account"><option value="">All accounts</option>'+AL.map(function(a){return '<option value="'+esc(a.id)+'"'+(a.id===ins.acct?' selected':'')+'>'+esc(a.name)+'</option>';}).join('')+'</select>':'')+'</div>';
+  if(!ins.acct){var pd={},part=0;R.forEach(function(r){if(r.part){part++;pd[r.day]=1;}});var pk=Object.keys(pd).sort();
+    if(part)h+='<div class="insnote" id="insPartial" style="margin-top:-4px">'+part+' trade'+(part===1?' ran':'s ran')+' on only some accounts ('+pk.slice(0,3).map(shortDate).join(', ')+(pk.length>3?' …':'')+'). "All accounts" counts them all together, so counts and sequences on those days mix accounts. Pick one account for exact numbers.</div>';}
+  h+=ins.sec==='over'?insOverHTML(R,cfg):ins.sec==='heat'?insHeatHTML(R,cfg):ins.sec==='tilt'?insTiltHTML(R,cfg):insRuleHTML(R,cfg);
+  $('#tab-ins').innerHTML=h+'<div class="small mut" style="text-align:center;margin:4px 0 20px">Computed on this device from your trades · times are Pacific</div>';}
+function insBanners(){var h='';
+  try{var cfg=insCfg(),od=insTodayOver();
+    if(od&&od.flagged)h+='<button type="button" class="insban" data-insgo="over" id="banOver"><b>📈 Busy day: '+esc(insOverText(od)||(od.n+' trades'))+'</b><span>'+(od.hist?'':'Plan default used (not enough history yet). ')+'A quick look at the plan can help. Tap for details.</span></button>';
+    var tt=insTiltTodayDay();
+    if(tt&&tt.why.length)h+='<button type="button" class="insban t" data-insgo="tilt" id="banTilt"><b>🌬️ Tilt warning: '+esc(tt.why.map(function(x){return x.t;}).join(', '))+'</b><span>Take a breath. A short pause and a look at the plan before the next trade. Tap for details.</span></button>';
+  }catch(e){console.error(e);}
+  return h;}
+function insField(label,name,val,type,hint){return '<div><label>'+label+'</label><input name="'+name+'" data-lbl="'+esc(label)+'" '+(type==='time'?'type="time"':'inputmode="decimal"')+' value="'+esc(val)+'"></div>';}
+function insSettingsHTML(){var c=insCfg();
+  return '<div class="card insset" id="insSettings"><h2>Insights settings</h2><p class="small mut" style="margin-top:0">Thresholds for the Insights tab. Defaults follow your midpoint-rule plan. Times are Pacific. Nothing here changes your trades.</p>'+
+   '<form id="insForm" autocomplete="off"><h3>Plan (rule-break cost)</h3>'+
+   '<div class="f2">'+insField('Plan window starts','planStart',c.planStart,'time')+insField('Plan window ends','planEnd',c.planEnd,'time')+'</div>'+
+   '<div class="f2">'+insField('Plan size (contracts)','planSize',c.planSize)+insField('Trades per day allowed','perDay',c.perDay)+'</div>'+
+   '<div class="hint">Untagged trades entered outside the window, above the plan size, or beyond the daily allowance show as "likely off-plan". Set the allowance to 2 to allow the optional sweep-reversal trade.</div>'+
+   '<h3>Overtrading</h3><div class="f2">'+insField('Flag above (× typical)','ovFactor',c.ovFactor)+insField('Days of history needed','ovMinDays',c.ovMinDays)+'</div>'+
+   '<div class="f2">'+insField('Hard cap: trades per day (0 = off)','ovTradeCap',c.ovTradeCap)+insField('Hard cap: contracts per day (0 = off)','ovContractCap',c.ovContractCap)+'</div>'+
+   '<div class="f2">'+insField('Default typical trades/day','ovDefTrades',c.ovDefTrades)+insField('Default typical contracts/day','ovDefContracts',c.ovDefContracts)+'</div>'+
+   '<div class="f2">'+insField('Baseline looks back (days)','ovWindow',c.ovWindow)+'<div></div></div>'+
+   '<div class="hint">Typical = median of the days before; until there are enough days, the defaults are used.</div>'+
+   '<h3>Tilt detector</h3><div class="f2">'+insField('Fast re-entry within (min)','tiltMin',c.tiltMin)+insField('Loss streak of','tiltStreak',c.tiltStreak)+'</div>'+
+   '<div class="f2">'+insField('Down on the day by more than ($)','tiltDown',c.tiltDown)+'<div></div></div>'+
+   '<h3>Heatmap</h3><div class="f2">'+insField('Min trades for best/worst','hmMin',c.hmMin)+'<div></div></div>'+
+   '<div style="height:12px"></div><div class="btns"><button class="btn pri" type="submit">Save</button><button class="btn" type="button" id="insDefaults">Reset defaults</button></div></form></div>';}
+
 /* ---------- events ---------- */
 document.addEventListener('click',function(e){
   var el=e.target.closest('button,[data-edit-trade],[data-edit-obs],.item img,.dshots img');if(!el)return;
@@ -1286,6 +1615,15 @@ document.addEventListener('click',function(e){
   if(el.id==='acctAdd'){var na=mkAcct('acct'+uid(),'Combine 50K #'+(db.settings.accounts.length),'standard',{startDate:curDay()});db.settings.accounts.push(na);acctOpen=na.id;save();toast('Account added — set its details');return;}
   if(el.id==='acctDefaults'){if(!confirm('Replace your account list with the 3 default accounts (Static 50K, Combine 50K #1, #2) and the Oct 7 opening state?'))return;db.settings.accounts=defaultAccounts();save();toast('Default accounts restored');return;}
   if(el.dataset.acctdel){if(db.settings.accounts.length<=1){alert('Keep at least one account.');return;}if(!confirm('Remove this account from the tracker? Trades are not deleted.'))return;db.settings.accounts=db.settings.accounts.filter(function(a){return a.id!==el.dataset.acctdel;});save();return;}
+  if(el.dataset.insgo){ins.sec=el.dataset.insgo;showTab('ins');return;}
+  if(el.dataset.insec){ins.sec=el.dataset.insec;ins.hmCell='';renderIns();window.scrollTo(0,0);return;}
+  if(el.dataset.hm){ins.hm=el.dataset.hm;renderIns();return;}
+  if(el.dataset.hmcell){ins.hmCell=ins.hmCell===el.dataset.hmcell?'':el.dataset.hmcell;renderIns();return;}
+  if(el.dataset.insspark){ins.spark=el.dataset.insspark;renderIns();return;}
+  if(el.dataset.insmore){ins.lim[el.dataset.insmore]+=el.dataset.insmore==='likely'?20:el.dataset.insmore==='tilt'?8:14;renderIns();return;}
+  if(el.dataset.insmark){var mk=el.dataset.insmark.split(':'),mt=db.trades.find(function(t){return t.id===mk[0];});
+    if(mt){mt.followed=mk[1]==='off'?'no':'yes';var okk=persist();render();toast(mk[1]==='off'?'Marked off-plan':'Marked on-plan');if(!okk)return;}return;}
+  if(el.id==='insDefaults'){if(!confirm('Reset all Insights settings to their defaults?'))return;db.settings.insights=fixIns({});save();toast('Insights settings reset');return;}
   if(el.dataset.tab||el.dataset.go){showTab(el.dataset.tab||el.dataset.go);return;}
   if(el.dataset.ck){ckToggle(el);return;}
   if(el.id==='ckReset'){var dd=ckDay(ckToday());if(dd){dd.checked=[];ckSync(dd);persist();}renderCheck();renderDash();renderTrades();toast('Checklist reset for today');return;}
@@ -1333,8 +1671,8 @@ $('#tradeForm').addEventListener('submit',saveTrade);
 $('#obsForm').addEventListener('submit',saveObs);
 document.addEventListener('input',function(e){var id=e.target.dataset&&e.target.dataset.ckedit;if(!id)return;var it=db.checklist.items.find(function(i){return i.id===id;});if(it){it.text=e.target.value;persist();}});
 document.addEventListener('keydown',function(e){if(e.target.id==='ckNew'&&e.key==='Enter'){e.preventDefault();$('#ckAdd').click();}});
-function showTab(name){tab=name;$$('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===name);});['dash','trades','cal','check','more'].forEach(function(t){$('#tab-'+t).classList.toggle('hide',t!==tab);});
-  $('#fab').classList.toggle('hide',tab==='more'||tab==='check');document.body.classList.toggle('tab-check',tab==='check');document.body.classList.toggle('tab-cal',tab==='cal');if(tab==='check'&&ckRendered!==ckToday())renderCheck();window.scrollTo(0,0);}
+function showTab(name){tab=name;$$('nav button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===name);});['dash','trades','cal','ins','check','more'].forEach(function(t){$('#tab-'+t).classList.toggle('hide',t!==tab);});
+  $('#fab').classList.toggle('hide',tab==='more'||tab==='check'||tab==='ins');document.body.classList.toggle('tab-check',tab==='check');document.body.classList.toggle('tab-cal',tab==='cal');document.body.classList.toggle('tab-ins',tab==='ins');if(tab==='ins')renderIns();if(tab==='check'&&ckRendered!==ckToday())renderCheck();window.scrollTo(0,0);}
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&ckRendered!==ckToday()){render();}});
 $$('[data-shot]').forEach(function(inp){inp.addEventListener('change',function(){var f=inp.closest('form'),k=f.id==='tradeForm'?'trade':'obs',file=inp.files&&inp.files[0];if(!file)return;resizeImage(file,function(u){editingShot[k]=u;showShot(f,u);});});});
 $('#importFile').addEventListener('change',function(){readFileInput(this);});
@@ -1349,10 +1687,18 @@ document.addEventListener('submit',function(e){var f=e.target,S=db.settings;
     a.dllOn=a.type==='static'?true:f.elements.dllOn.checked;a.startDate=f.elements.startDate.value;a.asOf=f.elements.asOf.value;
     ['openBalance','priorBest','priorHighEod','balanceOverride'].forEach(function(k){var v=f.elements[k].value.trim();a[k]=has(v)?num(v):'';});
     acctOpen=a.id;save();toast(a.name+' saved');return;}
+  if(f.id==='insForm'){e.preventDefault();var nv={},bad='',k;
+    for(k in INS_DEF){var raw=f.elements[k].value.trim();
+      if(INS_TIME.indexOf(k)>=0){if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(raw)){bad=k;break;}nv[k]=raw;}
+      else{if(raw===''||!isFinite(+raw)||+raw<INS_MIN[k]){bad=k;break;}nv[k]=+raw;}}
+    if(bad){alert('Check the "'+(f.elements[bad].dataset.lbl||bad)+'" setting: it needs a valid value (minimum '+(INS_TIME.indexOf(bad)>=0?'a time like 06:45':INS_MIN[bad])+').');return;}
+    if(nv.planStart>=nv.planEnd){alert('The plan window must start before it ends.');return;}
+    db.settings.insights=nv;save();toast('Insights settings saved');return;}
   if(f.id!=='setForm')return;e.preventDefault();
   if(has(f.elements.mnqPv.value))S.instruments.MNQ.pv=num(f.elements.mnqPv.value);if(has(f.elements.mnqFee.value))S.instruments.MNQ.fee=num(f.elements.mnqFee.value);save();toast('Settings saved');});
 document.addEventListener('change',function(e){var t=e.target;
   if(t.id==='calAcct'){cal.acct=t.value;renderCal();return;}
+  if(t.id==='insAcct'){ins.acct=t.value;ins.hmCell='';renderIns();return;}
   if(t.dataset&&t.dataset.accttype!==undefined){var f=t.closest('form'),T=t.value==='static',D=ACCT_TYPES[t.value],O=ACCT_TYPES[T?'standard':'static'];
     $$('[data-tonly]',f).forEach(function(el){el.classList.toggle('hide',el.dataset.tonly!==t.value);});
     var cb=f.elements.dllOn;cb.disabled=T;if(T)cb.checked=true;$('[data-dlltxt]',f).textContent=T?'Required':'Use it';
@@ -1360,7 +1706,7 @@ document.addEventListener('change',function(e){var t=e.target;
 ['fFrom','fTo'].forEach(function(id){$('#'+id).addEventListener('change',function(){filt.from=$('#fFrom').value;filt.to=$('#fTo').value;filt.preset='custom';render();});});
 $('#fSetup').addEventListener('change',function(){filt.setup=this.value;render();});
 
-window.__journal={get db(){return db;},ckStats:ckStats,handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay,acctState:acctState,copyLimits:copyLimits,acctList:acctList,dayMap:dayMap,noteDay:noteDay,openDay:openDay,defaultAccounts:defaultAccounts,normalize:normalize,cal:cal,render:render,tsxMerge:tsxMerge,normTsx:normTsx,parseShareId:parseShareId,runSync:runSync,pnlFor:pnlFor,acctSynced:acctSynced,get lastSync(){return lastSync;},get syncing(){return syncing;},get tsxApi(){return TSX_API;},set tsxApi(v){TSX_API=v;}};
+window.__journal={get db(){return db;},ckStats:ckStats,handleImportText:handleImportText,parseDT:parseDT,rootOf:rootOf,ptParts:ptParts,get lastImport(){return lastImport;},autoPnl:autoPnl,autoR:autoR,stats:stats,toCSV:toCSV,importCSV:importCSV,tradingDay:tradingDay,acctState:acctState,copyLimits:copyLimits,acctList:acctList,dayMap:dayMap,noteDay:noteDay,openDay:openDay,defaultAccounts:defaultAccounts,normalize:normalize,cal:cal,render:render,curDay:curDay,ins:{state:ins,cfg:insCfg,recs:insRecs,rule:insRule,over:insOver,heat:insHeat,tilt:insTilt,group:insGroup,render:renderIns,fixIns:fixIns},tsxMerge:tsxMerge,normTsx:normTsx,parseShareId:parseShareId,runSync:runSync,pnlFor:pnlFor,acctSynced:acctSynced,get lastSync(){return lastSync;},get syncing(){return syncing;},get tsxApi(){return TSX_API;},set tsxApi(v){TSX_API=v;}};
 render();
 if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
   window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(e){console.warn('SW registration failed',e);});});}
